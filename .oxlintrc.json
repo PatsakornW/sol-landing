@@ -1,0 +1,95 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "plugins": ["typescript", "import", "unicorn"],
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "rules": {
+    "eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "eslint/no-console": "off",
+    "eslint/eqeqeq": "warn",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-non-null-asserted-optional-chain": "error",
+    "typescript/prefer-ts-expect-error": "warn",
+    "import/no-duplicates": "warn",
+    "import/no-unassigned-import": ["warn", { "allow": ["**/*.css", "**/*.scss"] }],
+    "unicorn/no-instanceof-array": "error",
+    "eslint/no-shadow": "off",
+    "eslint/no-unmodified-loop-condition": "off",
+    "eslint/no-underscore-dangle": [
+      "warn",
+      {
+        "allow": [
+          "_tag",
+          "_listeners",
+          "_rpcRequest",
+          "_rpcBatchRequest",
+          "_dispatch",
+          "_origConsoleError",
+          "_e2eTrackSignMessage",
+          "_e2eCanSignMessageFalse",
+          "__SM_USER_FRESHNESS__",
+          "__SM_GAP_METRICS__",
+          "__SM_RT_TIMING__",
+          "__SM_BROWSER_RPC_TELEMETRY__",
+          "__SM_E2E_SIGN_MESSAGE_CALLS__",
+          "__SOLS_E2E_WALLET__",
+          "__PRIVY_MOCK_SIGN_MESSAGE__",
+          "__PRIVY_MOCK_STATE__",
+          "__REACT_QUERY_CLIENT__",
+          "__setIsMutatingForCancel",
+          "__fireMutationCache",
+          "__mutationListenerCount",
+          "__isPostOverlay",
+          "__isChartMarkers"
+        ],
+        "allowAfterThis": true
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "build",
+    "target",
+    "coverage",
+    ".cache-synpress",
+    ".claude",
+    "**/*.d.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["tests/**/*", "e2e/**/*", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts"],
+      "rules": {
+        "eslint/no-unused-vars": "off",
+        "unicorn/consistent-function-scoping": "off"
+      }
+    },
+    {
+      "files": ["e2e/frontend/fixtures/**/*.ts"],
+      "rules": {
+        "eslint/no-empty-pattern": "off"
+      }
+    },
+    {
+      "files": ["e2e/scripts/**/*.ts"],
+      "rules": {
+        "typescript/no-explicit-any": "off",
+        "eslint/no-unused-vars": "off",
+        "import/no-duplicates": "off",
+        "eslint/eqeqeq": "off"
+      }
+    }
+  ]
+}

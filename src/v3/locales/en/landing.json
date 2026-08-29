@@ -1,0 +1,55 @@
+{
+  "nav": {
+    "home": "Home"
+  },
+  "hero": {
+    "eyebrow": "SolsMarket · One",
+    "title": "Real events. A real price.",
+    "lead": "Buy YES or NO on what happens next. Your wallet holds the collateral; the Solana program settles the outcome.",
+    "primary": "Open the app",
+    "secondary": "See how it works"
+  },
+  "heads": {
+    "surface": {
+      "eyebrow": "The surface",
+      "title": "This is the app.",
+      "lead": "News first, then the events open to take a side on."
+    },
+    "mechanism": {
+      "eyebrow": "Three steps",
+      "title": "A minute, end to end.",
+      "lead": "Connect, take a side, come back when the market resolves."
+    },
+    "coverage": {
+      "eyebrow": "Coverage",
+      "title": "Six desks at launch.",
+      "lead": "What the desk intends to cover. None of it is live yet."
+    },
+    "questions": {
+      "eyebrow": "Good to know",
+      "title": "The questions people ask."
+    },
+    "access": {
+      "eyebrow": "Stay in the loop",
+      "title": "We will send one email."
+    }
+  },
+  "surface": {
+    "news": {
+      "term": "News first",
+      "desc": "The rail across the top is the day. Most markets start as a story someone read that morning."
+    },
+    "events": {
+      "term": "Open events",
+      "desc": "Under it, every event you can take a side on, each showing what the book currently prices YES at."
+    },
+    "ticket": {
+      "term": "Your ticket",
+      "desc": "Take a side and you hold a token. It is yours in your own wallet until you redeem it."
+    }
+  },
+  "close": {
+    "body": "One email at the point there is something to open. The form here is a UI demo: there is no waitlist backend yet, so nothing is submitted or stored."
+  },
+  "toggle": "Design revision 3 — click for the next"
+}

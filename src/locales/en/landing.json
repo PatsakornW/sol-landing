@@ -1,0 +1,230 @@
+{
+  "nav": {
+    "label": "Primary navigation",
+    "how": "How it works",
+    "docs": "Docs",
+    "devnet": "Protocol updates",
+    "language": "Language",
+    "access": "Request access",
+    "accessShort": "Access",
+    "markets": "Markets",
+    "live": "Live",
+    "news": "News",
+    "rewards": "Rewards",
+    "explore": "Open app",
+    "feature": "Features",
+    "howItWorks": "How it works",
+    "contact": "Contact",
+    "theme": "Theme",
+    "menu": "Menu",
+    "close": "Close",
+    "revision": "Design revision 1 — click for the next"
+  },
+  "mechanism": "How it works",
+  "showcaseEyebrow": "Product preview",
+  "meta": {
+    "title": "SolsMarket — Prediction markets on Solana",
+    "description": "Collateralized YES/NO prediction markets on Solana. Orders match off-chain and settle on-chain. Non-custodial; outcomes resolve via an optimistic oracle."
+  },
+  "contact": {
+    "badge": "Contact",
+    "title": "Contact",
+    "body": "For product questions, partnerships, or press, use the channels below.",
+    "emailLabel": "Email",
+    "cta": "Open the app"
+  },
+  "about": {
+    "badge": "About",
+    "title": "Prediction markets with on-chain settlement",
+    "body": "Matching runs off-chain for speed. Positions, collateral, and payouts settle through the Solana program.",
+    "mission": {
+      "title": "What we build",
+      "desc": "Non-custodial markets where traders can express a probability on real-world outcomes."
+    },
+    "transparency": {
+      "title": "On-chain auditability",
+      "desc": "Vault balances, token supply, and settlement are visible on Solana."
+    },
+    "community": {
+      "title": "Open resolution",
+      "desc": "Outcomes are proposed publicly and can be disputed before they finalize."
+    }
+  },
+  "footer": {
+    "label": "Footer navigation",
+    "legal": "SolsMarket is under active development. This site is a product preview, not a live trading interface or an offer to trade.",
+    "tagline": "Prediction markets on Solana.",
+    "explore": "Explore",
+    "follow": "Follow",
+    "docs": "Docs",
+    "github": "GitHub",
+    "devnet": "Protocol updates",
+    "copyright": "© 2026 SolsMarket",
+    "disclaimer": "Non-custodial prediction markets on Solana. Speculative; not financial advice."
+  },
+  "hero": {
+    "title": "What happens next",
+    "titleAccent": "Already has a price",
+    "subtitle": "Collateralized YES/NO markets. Off-chain matching, on-chain settlement.",
+    "scrollHint": "Scroll",
+    "ctaPrimary": "Open app",
+    "ctaSecondary": "How it works"
+  },
+  "waitlist": {
+    "join": "Join waitlist",
+    "confirm": "Confirm",
+    "email": "Email address",
+    "joined": "Demo only — nothing was submitted or stored. See the docs for project updates.",
+    "invalid": "Enter a valid email address.",
+    "docs": "Read docs"
+  },
+  "access": {
+    "title": "Get in first",
+    "titleAccent": "We'll send a key",
+    "body": "A decision platform for interest rates, elections, and other real-world outcomes. Leave an email.",
+    "perk": "Selected invitations include a founder-tier account.",
+    "notice": "Not an offer to trade. Speculative; not advice."
+  },
+  "close": {
+    "marker": "Updates",
+    "title": "Stay informed while we build.",
+    "body": "This form is a UI demo. There is no waitlist backend yet, so no email is submitted or stored. Protocol design and status are in the docs."
+  },
+  "preview": {
+    "eyebrow": "Product surface",
+    "title": "The app you land on",
+    "body": "News and what's trending, then the events you can trade.",
+    "caption": "A look inside the product — sample markets on real-world events.",
+    "shot": "A screenshot of the trading app's home route: the live series window, the trending rail, the markets toolbar, and the first row of event-group cards."
+  },
+  "features": {
+    "title": "How the protocol works",
+    "subtitle": "Matching, settlement, custody, and resolution.",
+    "onchain": {
+      "title": "On-chain settlement",
+      "desc": "Fills settle on Solana against collateralized YES/NO token supply."
+    },
+    "instant": {
+      "title": "Off-chain matching",
+      "desc": "A central limit order book matches orders, then the program settles each fill."
+    },
+    "noncustodial": {
+      "title": "Non-custodial",
+      "desc": "You keep control of your keys. Orders and redemptions require your wallet signature."
+    },
+    "oracle": {
+      "title": "Optimistic oracle",
+      "desc": "Someone proposes an outcome with a bond. Others can dispute it before finalization."
+    }
+  },
+  "categories": {
+    "eyebrow": "Categories",
+    "title": "Market categories",
+    "subtitle": "Intended coverage once markets are live.",
+    "crypto": {
+      "name": "Crypto",
+      "hint": "BTC · ETH · SOL"
+    },
+    "politics": {
+      "name": "Politics",
+      "hint": "Elections & policy"
+    },
+    "sports": {
+      "name": "Sports",
+      "hint": "Matches & titles"
+    },
+    "culture": {
+      "name": "Culture",
+      "hint": "Media & trends"
+    },
+    "tech": {
+      "name": "Tech",
+      "hint": "Product launches"
+    },
+    "economy": {
+      "name": "Economy",
+      "hint": "Rates & macro"
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Common questions",
+    "custody": {
+      "term": "Who holds my funds?",
+      "definition": "You do. Your wallet signs orders; collateral sits in the market vault on-chain. SolsMarket does not hold withdrawal keys for your balance."
+    },
+    "resolution": {
+      "term": "How does a market resolve?",
+      "definition": "An outcome is proposed with a bond and remains open to challenge for a set window. After that window, the winning side redeems 1:1 for collateral."
+    },
+    "fees": {
+      "term": "What does trading cost?",
+      "definition": "The production fee schedule is not published yet. It will appear in the protocol docs before public trading."
+    },
+    "notCasino": {
+      "term": "How is this different from a casino bet?",
+      "definition": "You hold a tradable position priced by the book. You can sell before resolution; you are not locked into a single payout path until the market settles."
+    },
+    "chain": {
+      "term": "Which chain does it run on?",
+      "definition": "Solana only. Matching is off-chain; fills settle on-chain through the program."
+    },
+    "q1": {
+      "q": "What is SolsMarket?",
+      "a": "A prediction market protocol on Solana for trading collateralized YES/NO tokens on real-world events."
+    },
+    "q2": {
+      "q": "Is it non-custodial?",
+      "a": "Yes. Orders and redemptions require your wallet signature; SolsMarket does not take custody of your funds."
+    },
+    "q3": {
+      "q": "How are markets settled?",
+      "a": "An off-chain order book matches trades; each fill settles on-chain. Resolution uses an optimistic oracle."
+    },
+    "q4": {
+      "q": "How do I get paid?",
+      "a": "After resolution, winning tokens redeem 1:1 for collateral into your wallet."
+    },
+    "q5": {
+      "q": "What does it cost?",
+      "a": "Fees will be documented before public trading. There is no separate custody or withdrawal lock-up fee by design."
+    }
+  },
+  "how": {
+    "eyebrow": "Getting started",
+    "title": "How it works",
+    "one": {
+      "title": "Connect a wallet",
+      "desc": "Use a Solana wallet. Actions that move funds require an explicit signature.",
+      "shot": "A screenshot of the Connect wallet dialog: continue with Google, sign in by email, or pick Phantom from the browser wallets."
+    },
+    "two": {
+      "title": "Buy YES or NO",
+      "desc": "Choose a market and buy the outcome at the price you accept.",
+      "shot": "A screenshot of a market: will the Fed cut rates at the next meeting, Yes trading at 62¢ a share and No at 38¢, with a $25.00 order ready."
+    },
+    "three": {
+      "title": "Redeem after resolution",
+      "desc": "When the market resolves, winning tokens redeem 1:1 for collateral.",
+      "shot": "A screenshot of a resolved market: Yes won, paying out $40.32 USDC on 40.32 Yes shares, already in the wallet."
+    }
+  },
+  "cta": {
+    "badge": "Next",
+    "title": "Read the protocol, or open the app",
+    "subtitle": "Documentation covers design and status. The app is the trading surface when available.",
+    "button": "Open app",
+    "secondary": "How it works"
+  },
+  "imagePlaceholder": "Image placeholder",
+  "notFound": {
+    "title": "Page not found",
+    "body": "That URL does not exist on this site.",
+    "home": "Back home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "An unexpected error occurred. Try again.",
+    "retry": "Try again"
+  }
+}

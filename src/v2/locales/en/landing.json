@@ -1,0 +1,66 @@
+{
+  "stage": {
+    "open": "Open",
+    "claim": "The claim",
+    "surface": "The app",
+    "mechanism": "The mechanism",
+    "coverage": "The desk",
+    "questions": "Questions",
+    "close": "Join"
+  },
+  "of": "of",
+  "hero": {
+    "title": "Everyone has a guess.",
+    "accent": "Only a market has a number.",
+    "lead": "Buy YES or NO on a real event. The chain holds the collateral and settles the outcome."
+  },
+  "heads": {
+    "claim": {
+      "title": "A price is an opinion someone had to pay for.",
+      "lead": "That is the whole argument for a prediction market, and the only one this page makes."
+    },
+    "surface": {
+      "title": "This is what opens.",
+      "lead": "News first, then the events you can take a side on."
+    },
+    "mechanism": {
+      "title": "A minute, end to end.",
+      "lead": "Sign, take a side, come back when it resolves."
+    },
+    "coverage": {
+      "title": "Six desks at launch.",
+      "lead": "Intended coverage. None of it is live yet."
+    },
+    "questions": {
+      "title": "The short answers.",
+      "lead": "The long ones are in the protocol docs."
+    },
+    "close": {
+      "title": "We will send one email.",
+      "lead": "At the point there is something to open. Nothing before that."
+    }
+  },
+  "claim": {
+    "label": "For example",
+    "question": "Will the central bank cut rates at its next meeting?",
+    "yes": "Yes",
+    "no": "No",
+    "reading": "Sixty-three cents to win a dollar is a sixty-three percent chance — and unlike a poll or a pundit, everyone quoting it has money on the answer.",
+    "note": "Illustrative figures. No market is live yet.",
+    "points": {
+      "skin": {
+        "term": "It costs something to be wrong",
+        "desc": "A forecast with a price attached is one its author had to fund."
+      },
+      "moves": {
+        "term": "It moves when the world does",
+        "desc": "New information reprices the market as soon as someone trades on it."
+      },
+      "settles": {
+        "term": "It ends in a fact",
+        "desc": "The event happens or it does not, and the winning side redeems one-for-one."
+      }
+    }
+  },
+  "toggle": "Design revision 2 — click for the next"
+}
