@@ -24,13 +24,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-        # Reads the version from `packageManager` in package.json.
-
+      # Node first, so pnpm itself runs on the version the project expects.
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+
+      - uses: pnpm/action-setup@v4
+        # Reads the version from `packageManager` in package.json.
 
       - run: pnpm install --frozen-lockfile
 
