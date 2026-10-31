@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import { translatorFor } from '@/v2/i18n/messages';
+import { translatorFor } from '@/v1/i18n/messages';
 import { StatusPage, StatusRetry } from '@/components/landing/StatusPage';
 
-/** V2 error boundary. */
+/** V1 error boundary. */
 export default function SiteError({
   error,
   reset,

@@ -260,7 +260,7 @@ export function StageNav({ homeHref, labels }: { homeHref: string; labels: Stage
             onClick={() => setOpen(true)}
             aria-label={labels.menu}
             aria-expanded={open}
-            data-testid="v2-menu"
+            data-testid="v1-menu"
           >
             <HugeiconsIcon icon={MenuIcon} size={18} strokeWidth={2} />
           </button>
@@ -275,7 +275,7 @@ export function StageNav({ homeHref, labels }: { homeHref: string; labels: Stage
             role="dialog"
             aria-modal="true"
             aria-label={labels.navLabel}
-            data-testid="v2-drawer"
+            data-testid="v1-drawer"
           >
             <div {...stylex.props(styles.sheetHead)}>
               <span {...stylex.props(styles.sheetBrand)}>

@@ -1,8 +1,8 @@
 import { StatusHome, StatusPage } from '@/components/landing/StatusPage';
-import { translatorFor } from '@/v3/i18n/messages';
+import { translatorFor } from '@/v2/i18n/messages';
 
-/** The 404 inside the V3 tree. */
-export default function V3NotFound() {
+/** The 404 inside the V2 tree. */
+export default function V2NotFound() {
   const t = translatorFor();
 
   return (
@@ -10,7 +10,7 @@ export default function V3NotFound() {
       eyebrow="404"
       title={t('notFound.title')}
       body={t('notFound.body')}
-      action={<StatusHome href="/v3">{t('notFound.home')}</StatusHome>}
+      action={<StatusHome href="/v2">{t('notFound.home')}</StatusHome>}
     />
   );
 }

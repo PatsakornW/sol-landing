@@ -10,8 +10,8 @@ import en from '../locales/en/landing.json';
  */
 export const LOCALE = 'en';
 
-/** V3 keeps the shipped product copy and adds its own heads and figures. */
-export const messages = { ...base, v3: en };
+/** V1 keeps the shipped product copy and adds its own heads and figures. */
+export const messages = { ...base, v1: en };
 
 const translate = createTranslator(messages);
 

@@ -7,9 +7,9 @@ import '@/styles/globals.css';
 import { AppConfig } from '@/configs/configs';
 import { Providers } from '@/components/providers';
 import { revisionBody } from '@/styles/revision-body.styles';
-import { VersionToggle } from '@/v2/components/VersionToggle';
-import { LOCALE, translatorFor } from '@/v2/i18n/messages';
-import { v2Dark, v2Shape, v2Type } from '@/v2/styles/theme';
+import { VersionToggle } from '@/v1/components/VersionToggle';
+import { LOCALE, translatorFor } from '@/v1/i18n/messages';
+import { v1Dark, v1Shape, v1Type } from '@/v1/styles/theme';
 
 /* One face for the whole revision. */
 const inter = localFont({
@@ -66,7 +66,7 @@ export const viewport: Viewport = {
  * there is nothing to restore before first paint and nothing to switch.
  */
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
-  const themed = stylex.props(v2Type, v2Shape, v2Dark);
+  const themed = stylex.props(v1Type, v1Shape, v1Dark);
 
   return (
     <html lang={LOCALE} className={`${themed.className ?? ''} ${inter.variable}`} data-theme="dark">

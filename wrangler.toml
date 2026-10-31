@@ -1,0 +1,5 @@
+# Cloudflare Pages project. `pnpm deploy` and the GitHub Action both publish
+# `out/` (the static export) plus `functions/` (the two Pages Functions).
+name = "sol-landing"
+compatibility_date = "2026-10-01"
+pages_build_output_dir = "out"

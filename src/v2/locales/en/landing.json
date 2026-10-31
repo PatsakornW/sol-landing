@@ -1,66 +1,55 @@
 {
-  "stage": {
-    "open": "Open",
-    "claim": "The claim",
-    "surface": "The app",
-    "mechanism": "The mechanism",
-    "coverage": "The desk",
-    "questions": "Questions",
-    "close": "Join"
+  "nav": {
+    "home": "Home"
   },
-  "of": "of",
   "hero": {
-    "title": "Everyone has a guess.",
-    "accent": "Only a market has a number.",
-    "lead": "Buy YES or NO on a real event. The chain holds the collateral and settles the outcome."
+    "eyebrow": "SolsMarket · One",
+    "title": "Real events. A real price.",
+    "lead": "Buy YES or NO on what happens next. Your wallet holds the collateral; the Solana program settles the outcome.",
+    "primary": "Open the app",
+    "secondary": "See how it works"
   },
   "heads": {
-    "claim": {
-      "title": "A price is an opinion someone had to pay for.",
-      "lead": "That is the whole argument for a prediction market, and the only one this page makes."
-    },
     "surface": {
-      "title": "This is what opens.",
-      "lead": "News first, then the events you can take a side on."
+      "eyebrow": "The surface",
+      "title": "This is the app.",
+      "lead": "News first, then the events open to take a side on."
     },
     "mechanism": {
+      "eyebrow": "Three steps",
       "title": "A minute, end to end.",
-      "lead": "Sign, take a side, come back when it resolves."
+      "lead": "Connect, take a side, come back when the market resolves."
     },
     "coverage": {
+      "eyebrow": "Coverage",
       "title": "Six desks at launch.",
-      "lead": "Intended coverage. None of it is live yet."
+      "lead": "What the desk intends to cover. None of it is live yet."
     },
     "questions": {
-      "title": "The short answers.",
-      "lead": "The long ones are in the protocol docs."
+      "eyebrow": "Good to know",
+      "title": "The questions people ask."
     },
-    "close": {
-      "title": "We will send one email.",
-      "lead": "At the point there is something to open. Nothing before that."
+    "access": {
+      "eyebrow": "Stay in the loop",
+      "title": "We will send one email."
     }
   },
-  "claim": {
-    "label": "For example",
-    "question": "Will the central bank cut rates at its next meeting?",
-    "yes": "Yes",
-    "no": "No",
-    "reading": "Sixty-three cents to win a dollar is a sixty-three percent chance — and unlike a poll or a pundit, everyone quoting it has money on the answer.",
-    "note": "Illustrative figures. No market is live yet.",
-    "points": {
-      "skin": {
-        "term": "It costs something to be wrong",
-        "desc": "A forecast with a price attached is one its author had to fund."
-      },
-      "moves": {
-        "term": "It moves when the world does",
-        "desc": "New information reprices the market as soon as someone trades on it."
-      },
-      "settles": {
-        "term": "It ends in a fact",
-        "desc": "The event happens or it does not, and the winning side redeems one-for-one."
-      }
+  "surface": {
+    "news": {
+      "term": "News first",
+      "desc": "The rail across the top is the day. Most markets start as a story someone read that morning."
+    },
+    "events": {
+      "term": "Open events",
+      "desc": "Under it, every event you can take a side on, each showing what the book currently prices YES at."
+    },
+    "ticket": {
+      "term": "Your ticket",
+      "desc": "Take a side and you hold a token. It is yours in your own wallet until you redeem it."
     }
+  },
+  "close": {
+    "body": "One email at the point there is something to open. The form here is a UI demo: there is no waitlist backend yet, so nothing is submitted or stored."
   },
   "toggle": "Design revision 2 — click for the next"
 }

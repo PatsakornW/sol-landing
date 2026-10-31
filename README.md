@@ -6,7 +6,7 @@ Pages.
 | Route | Design |
 |---|---|
 | `/` | **Stage** — one idea per screen, poster type, a ground that alternates |
-| `/v3` | **Parallax** — full-screen frosted bands over the app, held behind the page |
+| `/v2` | **Parallax** — full-screen frosted bands over the app, held behind the page |
 
 The corner pill on either page steps to the other and wraps.
 
@@ -42,13 +42,27 @@ deploy if you have touched anything under `functions/`.
 
 ## Deploying
 
-Connect the repository to Cloudflare Pages and set:
+Every push to `main` deploys through GitHub Actions
+(`.github/workflows/deploy.yml`): install, typecheck, lint, build, then
+`wrangler pages deploy` to the Cloudflare Pages project named in
+`wrangler.toml` (`sol-landing`). Pull requests get a preview deployment on
+their own branch alias.
 
-- **Build command** — `pnpm build`
-- **Build output directory** — `out`
-- **Node version** — 22 or newer
+The workflow needs two repository **secrets**:
 
-Or from a terminal:
+- `CLOUDFLARE_API_TOKEN` — a token with the *Cloudflare Pages: Edit* permission
+- `CLOUDFLARE_ACCOUNT_ID` — from the Cloudflare dashboard sidebar
+
+and reads the three `NEXT_PUBLIC_*` variables below from repository
+**variables** (they fall back to their defaults when unset). Create the Pages
+project once beforehand, either in the dashboard (Workers & Pages → Create →
+Pages → Direct Upload) or from a terminal:
+
+```bash
+pnpm exec wrangler pages project create sol-landing --production-branch main
+```
+
+To deploy by hand instead:
 
 ```bash
 pnpm build && pnpm deploy
@@ -74,9 +88,9 @@ belongs in the Pages runtime environment.
 
 ```
 src/app/(site)/   the stage design, at /
-src/app/(v3)/     the parallax design, at /v3
-src/v2/           everything the stage design owns — its chrome, blocks, theme, copy
-src/v3/           the same for the parallax design
+src/app/(v2)/     the parallax design, at /v2
+src/v1/           everything the stage design owns — its chrome, blocks, theme, copy
+src/v2/           the same for the parallax design
 src/components/   shared: brand, waitlist, access dialog, the Remotion clips
 src/lib/          news feed, dither, Remotion helpers, the design switch
 functions/        the two Cloudflare Pages Functions

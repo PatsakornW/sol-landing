@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { nextRevisionPath } from '@/lib/revisions';
 import { media } from '../../styles/breakpoints.stylex';
 import { color, font } from '../../styles/tokens.stylex';
-import { STAGE } from '../styles/stage.stylex';
+import { GLASS } from '../styles/glass.stylex';
 
 const styles = stylex.create({
   button: {
@@ -24,7 +24,7 @@ const styles = stylex.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: color.border,
-    borderRadius: STAGE.pill,
+    borderRadius: GLASS.pill,
     backgroundColor: {
       default: color.card,
       ':hover': { default: null, [media.hover]: color.hover },
@@ -54,7 +54,7 @@ export function VersionToggle() {
     <button
       type="button"
       {...stylex.props(styles.button)}
-      onClick={() => router.push(nextRevisionPath('stage'))}
+      onClick={() => router.push(nextRevisionPath('parallax'))}
       aria-label={label}
       title={label}
       data-testid="landing-version-toggle"

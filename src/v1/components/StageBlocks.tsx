@@ -116,7 +116,7 @@ const styles = stylex.create({
   legalOn: {
     color: 'rgba(255, 255, 255, 0.55)',
   },
-  /* The same shape V2 gives its access band: one panel across the full
+  /* The same shape V1 gives its access band: one panel across the full
      measure, the promise on the left and the control on the right, so the
      reader's eye lands on the line and then on the thing that acts on it. A
      card half the column wide reads as the leftover half of a pair. */

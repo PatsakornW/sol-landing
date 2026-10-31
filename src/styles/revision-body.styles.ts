@@ -2,7 +2,7 @@ import * as stylex from '@stylexjs/stylex';
 import { color, font } from './tokens.stylex';
 
 /**
- * The `<body>` rule every design revision after V2 carries.
+ * The `<body>` rule every design revision after V1 carries.
  *
  * `globals.css` binds the document body to the shipped page's monospaced
  * register through `--font-geist-mono`. A revision that does not load that face

@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   // No image optimizer on a static export; the clips draw their own bitmaps.
   images: { unoptimized: true },
-  // Pages serves `/v3` from `v3/index.html`, so the links have to carry the
+  // Pages serves `/v2` from `v2/index.html`, so the links have to carry the
   // trailing slash the file layout implies.
   trailingSlash: true,
 };

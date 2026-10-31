@@ -1,12 +1,12 @@
 'use client';
 
 import * as stylex from '@stylexjs/stylex';
-import { translatorFor } from '@/v3/i18n/messages';
+import { translatorFor } from '@/v1/i18n/messages';
 import { useRouter } from 'next/navigation';
 import { nextRevisionPath } from '@/lib/revisions';
 import { media } from '../../styles/breakpoints.stylex';
 import { color, font } from '../../styles/tokens.stylex';
-import { GLASS } from '../styles/glass.stylex';
+import { STAGE } from '../styles/stage.stylex';
 
 const styles = stylex.create({
   button: {
@@ -24,7 +24,7 @@ const styles = stylex.create({
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: color.border,
-    borderRadius: GLASS.pill,
+    borderRadius: STAGE.pill,
     backgroundColor: {
       default: color.card,
       ':hover': { default: null, [media.hover]: color.hover },
@@ -48,18 +48,18 @@ const styles = stylex.create({
 export function VersionToggle() {
   const t = translatorFor();
   const router = useRouter();
-  const label = t('v3.toggle');
+  const label = t('v1.toggle');
 
   return (
     <button
       type="button"
       {...stylex.props(styles.button)}
-      onClick={() => router.push(nextRevisionPath('parallax'))}
+      onClick={() => router.push(nextRevisionPath('stage'))}
       aria-label={label}
       title={label}
       data-testid="landing-version-toggle"
     >
-      V3
+      V1
     </button>
   );
 }

@@ -4,11 +4,11 @@
 export const AppConfig = {
   name: 'SolsMarket',
   // The landing site's own canonical origin (metadata / sitemap / hreflang).
-  baseUrl: (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://solsmarket.xyz').replace(/\/$/, ''),
+  baseUrl: (process.env.NEXT_PUBLIC_SITE_URL || 'https://solsmarket.xyz').replace(/\/$/, ''),
   // The main trading app that nav / CTAs deep-link into.
-  appUrl: (process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').replace(/\/$/, ''),
+  appUrl: (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/$/, ''),
   // VitePress docs host (separate from the landing App Router).
-  docsUrl: (process.env.NEXT_PUBLIC_DOCS_URL ?? 'https://docs.solsmarket.xyz').replace(/\/$/, ''),
+  docsUrl: (process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.solsmarket.xyz').replace(/\/$/, ''),
 
   email: 'hello@solsmarket.xyz',
   social: {

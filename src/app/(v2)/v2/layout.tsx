@@ -7,9 +7,9 @@ import '@/styles/globals.css';
 import { AppConfig } from '@/configs/configs';
 import { Providers } from '@/components/providers';
 import { revisionBody } from '@/styles/revision-body.styles';
-import { VersionToggle } from '@/v3/components/VersionToggle';
-import { LOCALE, translatorFor } from '@/v3/i18n/messages';
-import { v3Dark, v3Shape, v3Type } from '@/v3/styles/theme';
+import { VersionToggle } from '@/v2/components/VersionToggle';
+import { LOCALE, translatorFor } from '@/v2/i18n/messages';
+import { v2Dark, v2Shape, v2Type } from '@/v2/styles/theme';
 
 /* One face for the whole revision. */
 const inter = localFont({
@@ -65,8 +65,8 @@ export const viewport: Viewport = {
  * revision has. There is no boot script and no toggle: with a single palette
  * there is nothing to restore before first paint and nothing to switch.
  */
-export default function V3Layout({ children }: { children: React.ReactNode }) {
-  const themed = stylex.props(v3Type, v3Shape, v3Dark);
+export default function V2Layout({ children }: { children: React.ReactNode }) {
+  const themed = stylex.props(v2Type, v2Shape, v2Dark);
 
   return (
     <html lang={LOCALE} className={`${themed.className ?? ''} ${inter.variable}`} data-theme="dark">

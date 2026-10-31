@@ -1,46 +1,54 @@
 import * as stylex from '@stylexjs/stylex';
 import { WaitlistProvider } from '@/components/landing/Waitlist';
-import { media } from '../../../styles/breakpoints.stylex';
 import { color } from '../../../styles/tokens.stylex';
-import { ClaimBoard } from '@/v2/components/ClaimBoard';
-import { OpeningStage } from '@/v2/components/OpeningStage';
-import { Stage } from '@/v2/components/Stage';
-import { StageClip } from '@/v2/components/StageClip';
-import { StageClose, StageList } from '@/v2/components/StageBlocks';
-import { StageNav } from '@/v2/components/StageNav';
-import { StageSteps } from '@/v2/components/StageSteps';
+import { ClosePane, Footer, GlassCards, Hero, Section } from '@/v2/components/Blocks';
+import { FaqPanel } from '@/v2/components/FaqPanel';
+import { PillNav } from '@/v2/components/PillNav';
+import { NoteRow } from '@/v2/components/Panes';
+import { ParallaxScene } from '@/v2/components/ParallaxScene';
+import { StepCards } from '@/v2/components/StepCards';
 import { translatorFor } from '@/v2/i18n/messages';
 
 const CATEGORIES = ['crypto', 'politics', 'sports', 'culture', 'tech', 'economy'] as const;
-const FAQS = ['custody', 'resolution', 'fees', 'notCasino'] as const;
-const CLAIM_POINTS = ['skin', 'moves', 'settles'] as const;
+const FAQS = ['custody', 'resolution', 'fees', 'notCasino', 'chain'] as const;
+const SURFACE = ['news', 'events', 'ticket'] as const;
 
 const styles = stylex.create({
-  /* The scroll container itself: snapping is `proximity`, not `mandatory` — a
-     stage taller than the viewport (a long headline on a phone, or a reader at 200%)
-     must stay scrollable through its own tail rather than being yanked to the
-     next screen. */
+  /* The page itself is transparent: the fixed backdrop supplies the ground, so
+     an opaque page would simply cover it. */
   page: {
+    position: 'relative',
     minHeight: '100dvh',
-    backgroundColor: color.surface3,
     color: color.fg,
-    scrollSnapType: { default: 'none', [media.md]: 'y proximity' },
   },
 });
 
 /**
- * Revision 6 — the same product, staged.
+ * Revision 6 — revision 5, read without the glass under its heads.
  *
- * One idea per screen, poster type, and a ground that alternates between them.
- * Every moving surface is the
- * shipped page's: the dithered plates (here a low-contrast backdrop for the
- * opening shot), the home clip, the three mechanism clips, the waitlist form
- * and the access dialog. Two stages come from catalogue copy V1 never puts on
- * the page (`features.*`, `categories.*`).
+ * Same bands, same cards, same room. The one difference is where the section
+ * heads sit: V5 gives each one a frosted haze to hold it off the app behind
+ * the page, and this revision takes that away, so the type lands straight on
+ * the room and the wash over the scene is the only thing carrying it.
+ *
+ * A room of floating panes seen in perspective, fixed behind the whole
+ * document: the depths part as the page scrolls and lean towards the pointer.
+ * Over them, every block of copy sits on frosted glass — a capsule of links for
+ * chrome, full-screen bands, panels that let the room through, and a row of
+ * figures near the end.
+ *
+ * The figures are structural — YES+NO summing to a hundred, redemption at 1:1,
+ * no custody, six desks — and the band says so in as many words. Nothing here
+ * has traded, so there is no usage to quote, and a launch page that invented
+ * some would be lying in the one place a reader checks.
+ *
+ * Every moving surface is the shipped page's: the home clip (here the fixed
+ * backdrop), the three mechanism clips, the waitlist form, the access dialog
+ * and the kit accordion.
  */
 function HomeViewShell() {
   const t = translatorFor();
-  const homeHref = '/';
+  const homeHref = '/v2';
 
   return (
     <WaitlistProvider
@@ -54,10 +62,13 @@ function HomeViewShell() {
       }}
     >
       <div {...stylex.props(styles.page)}>
-        <StageNav
+        <ParallaxScene shot={t('preview.shot')} />
+
+        <PillNav
           homeHref={homeHref}
           labels={{
             navLabel: t('nav.label'),
+            home: t('v2.nav.home'),
             how: t('nav.how'),
             faq: t('faq.eyebrow'),
             docs: t('nav.docs'),
@@ -76,61 +87,50 @@ function HomeViewShell() {
           }}
         />
 
-        <OpeningStage
+        <Hero
+          eyebrow={t('v2.hero.eyebrow')}
           title={t('v2.hero.title')}
-          titleAccent={t('v2.hero.accent')}
           lead={t('v2.hero.lead')}
+          primary={t('v2.hero.primary')}
+          secondary={t('v2.hero.secondary')}
         />
 
-        {/* A stage the shipped page has no equivalent for: the argument for a
-            prediction market at all, with nothing else on screen to dilute it. */}
-        <Stage
-          id="claim"
-          num="01"
-          label={t('v2.stage.claim')}
-          title={t('v2.heads.claim.title')}
-          lead={t('v2.heads.claim.lead')}
-        >
-          <ClaimBoard
-            labels={{
-              label: t('v2.claim.label'),
-              question: t('v2.claim.question'),
-              yes: t('v2.claim.yes'),
-              no: t('v2.claim.no'),
-              reading: t('v2.claim.reading'),
-              note: t('v2.claim.note'),
-            }}
-            points={CLAIM_POINTS.map((key) => ({
-              key,
-              term: t(`v2.claim.points.${key}.term`),
-              desc: t(`v2.claim.points.${key}.desc`),
-            }))}
-          />
-        </Stage>
-
-        {/* The copy inside the plate is the app's own English UI, the same way
-            the mechanism clips carry theirs — only the framing is localised. */}
-        <Stage
-          id="preview"
-          num="02"
-          label={t('v2.stage.surface')}
+        {/* The one band that points at the backdrop rather than adding a
+            picture of its own — the app is already behind the page, so this
+            names what is on screen. */}
+        <Section
+          id="surface"
+          eyebrow={t('v2.heads.surface.eyebrow')}
           title={t('v2.heads.surface.title')}
           lead={t('v2.heads.surface.lead')}
         >
-          <StageClip caption={t('preview.caption')} shot={t('preview.shot')} />
-        </Stage>
+          <NoteRow
+            notes={SURFACE.map((key) => ({
+              key,
+              term: t(`v2.surface.${key}.term`),
+              desc: t(`v2.surface.${key}.desc`),
+            }))}
+          />
+        </Section>
 
-        <Stage
+        <Section
           id="mechanism"
-          num="03"
-          label={t('v2.stage.mechanism')}
+          eyebrow={t('v2.heads.mechanism.eyebrow')}
           title={t('v2.heads.mechanism.title')}
           lead={t('v2.heads.mechanism.lead')}
         >
-          <StageSteps
+          <StepCards
             steps={[
-              { title: t('how.one.title'), desc: t('how.one.desc'), shot: t('how.one.shot') },
-              { title: t('how.two.title'), desc: t('how.two.desc'), shot: t('how.two.shot') },
+              {
+                title: t('how.one.title'),
+                desc: t('how.one.desc'),
+                shot: t('how.one.shot'),
+              },
+              {
+                title: t('how.two.title'),
+                desc: t('how.two.desc'),
+                shot: t('how.two.shot'),
+              },
               {
                 title: t('how.three.title'),
                 desc: t('how.three.desc'),
@@ -138,62 +138,57 @@ function HomeViewShell() {
               },
             ]}
           />
-        </Stage>
+        </Section>
 
-        <Stage
+        <Section
           id="coverage"
-          num="04"
-          label={t('v2.stage.coverage')}
+          eyebrow={t('v2.heads.coverage.eyebrow')}
           title={t('v2.heads.coverage.title')}
           lead={t('v2.heads.coverage.lead')}
-          invert
         >
-          <StageList
-            invert
-            rows={CATEGORIES.map((key) => ({
+          <GlassCards
+            cards={CATEGORIES.map((key) => ({
               key,
-              term: t(`categories.${key}.name`),
+              title: t(`categories.${key}.name`),
               desc: t(`categories.${key}.hint`),
             }))}
           />
-        </Stage>
+        </Section>
 
-        <Stage
+        <Section
           id="faq"
-          num="05"
-          label={t('v2.stage.questions')}
+          eyebrow={t('v2.heads.questions.eyebrow')}
           title={t('v2.heads.questions.title')}
-          lead={t('v2.heads.questions.lead')}
         >
-          <StageList
-            rows={FAQS.map((id) => ({
-              key: id,
-              term: t(`faq.${id}.term`),
-              desc: t(`faq.${id}.definition`),
+          <FaqPanel
+            note={t('footer.disclaimer')}
+            items={FAQS.map((id) => ({
+              id,
+              title: t(`faq.${id}.term`),
+              description: t(`faq.${id}.definition`),
             }))}
           />
-        </Stage>
+        </Section>
 
-        <Stage
+        <Section
           id="access"
-          num="06"
-          label={t('v2.stage.close')}
-          title={t('v2.heads.close.title')}
-          lead={t('v2.heads.close.lead')}
+          eyebrow={t('v2.heads.access.eyebrow')}
+          title={t('v2.heads.access.title')}
         >
-          <StageClose
-            labels={{
-              kicker: t('close.marker'),
-              body: t('close.title'),
-              note: t('close.body'),
-              docs: t('footer.docs'),
-              app: t('nav.explore'),
-              contact: t('nav.contact'),
-              copyright: t('footer.copyright'),
-              disclaimer: t('footer.disclaimer'),
-            }}
-          />
-        </Stage>
+          <ClosePane body={t('v2.close.body')} />
+        </Section>
+
+        <Footer
+          homeHref={homeHref}
+          labels={{
+            label: t('footer.label'),
+            docs: t('footer.docs'),
+            app: t('nav.explore'),
+            contact: t('nav.contact'),
+            copyright: t('footer.copyright'),
+            disclaimer: t('footer.disclaimer'),
+          }}
+        />
       </div>
     </WaitlistProvider>
   );

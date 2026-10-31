@@ -3,61 +3,63 @@ import { shape } from '../../styles/shape.stylex';
 import { color, font } from '../../styles/tokens.stylex';
 
 /**
- * Revision 6 — the same product, staged.
+ * Revision 6 — revision 5's material, on a shorter page.
  *
- * One idea per screen, type at poster size, and almost no chrome. The palette
- * is deliberately narrow: a ground, its ink, and the blue. Anything else on
- * screen at that scale becomes decoration the reader has to look past.
+ * One moving shot fixed behind the whole document, and every block of copy
+ * floating over it on frosted glass. Nothing here is opaque except the type:
+ * the panels let the ground through, the chrome is a capsule rather than a bar,
+ * and the page is read as a sequence of full screens over one continuous
+ * backdrop.
  */
 
-/** One face, very large and very tight. */
+/** One sans, tight, in three weights. The shot supplies the personality. */
 export const v2Type = stylex.createTheme(font, {
-  display: 'var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif',
-  sans: 'var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif',
+  display: 'var(--font-inter), Inter, "Helvetica Neue", ui-sans-serif, system-ui, sans-serif',
+  sans: 'var(--font-inter), Inter, "Helvetica Neue", ui-sans-serif, system-ui, sans-serif',
 });
 
-/** Soft but not round — the stage frames a clip, it does not pillow it. */
+/** The kit's cards and inputs pick the glass scale up from here. */
 export const v2Shape = stylex.createTheme(shape, {
-  bgRadius: '20px',
-  mergedRadius: '16px',
-  focusRingRadius: '24px',
+  bgRadius: '28px',
+  mergedRadius: '20px',
+  focusRingRadius: '32px',
 });
 
 /**
- * Night: the stage as a cinema. Near-black ground, paper-white type, and the
- * blue lifted to `#7fa9ff` — `#1d4ed8` clears this ground at 1.9:1, far under
- * the line for type set this large and this thin.
+ * Night. The same glass over the same shot with the light behind it turned
+ * down; the blue lifts to `#7ea6ff` because `#1b4dd8` clears this ground at
+ * 2.1:1, under the line for the small caps the page sets it in.
  */
 export const v2Dark = stylex.createTheme(color, {
-  background: '#08090c',
-  fg: '#f5f7fb',
-  card: '#101319',
-  muted: '#0c0e13',
-  mutedFg: 'rgba(245, 247, 251, 0.6)',
-  accentFill: 'rgba(127, 169, 255, 0.14)',
-  border: 'rgba(245, 247, 251, 0.12)',
-  hover: 'rgba(245, 247, 251, 0.06)',
-  active: 'rgba(245, 247, 251, 0.1)',
-  primary: '#2f63ee',
-  primaryFg: '#04050a',
-  ring: '#7fa9ff',
-  surface1: '#04050a',
-  surface2: '#0c0e13',
-  surface3: '#08090c',
-  surface4: '#101319',
-  landingPrimary: '#7fa9ff',
-  landingPrimarySoft: 'rgba(127, 169, 255, 0.12)',
-  accentOrange: '#7fa9ff',
-  accentOrangeHover: '#a0c1ff',
-  accentOrangeActive: '#5f92f5',
-  accentOrangeDepth: '#132a5e',
-  accentOrangeInk: '#04050a',
-  pressFace: '#1d4ed8',
-  pressFaceHover: '#2f63ee',
-  pressFaceActive: '#1740b4',
-  pressDepth: '#132a5e',
-  pressLightFace: '#101319',
-  pressLightFaceHover: '#161a22',
-  pressLightFaceActive: '#08090c',
-  pressLightDepth: '#2b303b',
+  background: '#07090d',
+  fg: '#eef1f6',
+  card: '#12161d',
+  muted: '#0d1116',
+  mutedFg: 'rgba(238, 241, 246, 0.62)',
+  accentFill: 'rgba(126, 166, 255, 0.16)',
+  border: 'rgba(238, 241, 246, 0.14)',
+  hover: 'rgba(238, 241, 246, 0.07)',
+  active: 'rgba(238, 241, 246, 0.12)',
+  primary: '#2b62f0',
+  primaryFg: '#04060a',
+  ring: '#7ea6ff',
+  surface1: '#04060a',
+  surface2: '#0d1116',
+  surface3: '#07090d',
+  surface4: '#12161d',
+  landingPrimary: '#7ea6ff',
+  landingPrimarySoft: 'rgba(126, 166, 255, 0.14)',
+  accentOrange: '#7ea6ff',
+  accentOrangeHover: '#9dbcff',
+  accentOrangeActive: '#5d8cf5',
+  accentOrangeDepth: '#132a63',
+  accentOrangeInk: '#04060a',
+  pressFace: '#1b4dd8',
+  pressFaceHover: '#2b62f0',
+  pressFaceActive: '#153eb0',
+  pressDepth: '#132a63',
+  pressLightFace: '#12161d',
+  pressLightFaceHover: '#181d26',
+  pressLightFaceActive: '#07090d',
+  pressLightDepth: '#2b313c',
 });

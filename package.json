@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
     "preview:cf": "wrangler pages dev out",
-    "deploy": "wrangler pages deploy out"
+    "deploy": "wrangler pages deploy"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^3.1.1",

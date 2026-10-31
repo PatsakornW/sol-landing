@@ -1,5 +1,5 @@
 import { StatusHome, StatusPage } from '@/components/landing/StatusPage';
-import { translatorFor } from '@/v2/i18n/messages';
+import { translatorFor } from '@/v1/i18n/messages';
 
 /** The 404 inside the site tree. */
 export default function SiteNotFound() {
