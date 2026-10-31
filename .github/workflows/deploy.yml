@@ -34,20 +34,40 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
 
-      # A project site is served under /<repo>; a custom domain is not. Either
-      # way the base path comes from the Pages configuration, not a hardcode.
-      # `enablement` turns Pages on for the repository the first time this
-      # runs, with GitHub Actions as the source, so no setting has to be
-      # clicked beforehand.
-      - id: pages
+      # Turn Pages on for the repository, with Actions as the source, if it is
+      # not already. Best effort: the workflow token is not always allowed to
+      # (a private repository on a free plan, for one), and then the setting
+      # has to be made by hand under Settings → Pages — the build itself does
+      # not depend on this step.
+      - name: Enable GitHub Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+        continue-on-error: true
+
+      # A project site is served at https://<owner>.github.io/<repo>, so the
+      # base path is the repository name. Both are derived here rather than
+      # read back from the Pages API, which the step above may not have
+      # reached. For a custom domain set the repository variable
+      # NEXT_PUBLIC_BASE_PATH to a single space — the build trims it to
+      # nothing — and NEXT_PUBLIC_SITE_URL to the domain.
+      - name: Resolve the site URL
+        id: site
+        run: |
+          repo="${GITHUB_REPOSITORY#*/}"
+          owner="$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          base="${BASE_PATH_OVERRIDE:-/$repo}"
+          base="$(echo "$base" | xargs)"
+          echo "base_path=$base" >> "$GITHUB_OUTPUT"
+          echo "url=${SITE_URL_OVERRIDE:-https://$owner.github.io$base}" >> "$GITHUB_OUTPUT"
+        env:
+          BASE_PATH_OVERRIDE: ${{ vars.NEXT_PUBLIC_BASE_PATH }}
+          SITE_URL_OVERRIDE: ${{ vars.NEXT_PUBLIC_SITE_URL }}
 
       - run: pnpm build
         env:
-          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.site.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.site.outputs.url }}
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
           NEXT_PUBLIC_DOCS_URL: ${{ vars.NEXT_PUBLIC_DOCS_URL }}
 

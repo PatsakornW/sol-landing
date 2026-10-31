@@ -36,30 +36,33 @@ pnpm lint
 
 Every push to `main` deploys through GitHub Actions
 (`.github/workflows/deploy.yml`): install, typecheck, lint, build, then
-publish `out/` to GitHub Pages. Nothing to install or configure: the first
-run enables Pages for the repository with GitHub Actions as its source
-(`enablement: true` on `actions/configure-pages`).
+publish `out/` to GitHub Pages. One repository setting has to be made once
+by hand: **Settings → Pages → Build and deployment → Source** set to *GitHub
+Actions*. GitHub only offers Pages on a private repository to paid plans, so
+on a free account the repository has to be public for that setting to exist.
 
-A project site is served under `/<repo>` (here `/sol-landing`), so the
-workflow asks `actions/configure-pages` for the base path and passes it to the
-build as `NEXT_PUBLIC_BASE_PATH`. `next.config.ts` turns that into Next's
+A project site is served at `https://<owner>.github.io/<repo>`, so the
+workflow derives the base path (`/sol-landing`) and the site URL from the
+repository name and passes them to the build as `NEXT_PUBLIC_BASE_PATH` and
+`NEXT_PUBLIC_SITE_URL`. `next.config.ts` turns the base path into Next's
 `basePath`, which `<Link>` and the router honour on their own; the few plain
 `<img src>` and metadata URLs go through `asset()` in `src/configs/configs.ts`
-to pick it up too. With a custom domain the base path comes back empty and
-everything sits at the root.
+to pick it up too.
 
 ### Environment
 
 | Variable | Default |
 |---|---|
-| `NEXT_PUBLIC_BASE_PATH` | empty — set by the workflow from the Pages configuration |
-| `NEXT_PUBLIC_SITE_URL` | `https://solsmarket.xyz` — set by the workflow to the Pages URL |
+| `NEXT_PUBLIC_BASE_PATH` | empty locally; `/<repo>` in the workflow |
+| `NEXT_PUBLIC_SITE_URL` | `https://solsmarket.xyz` locally; the Pages URL in the workflow |
 | `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` |
 | `NEXT_PUBLIC_DOCS_URL` | `https://docs.solsmarket.xyz` |
 
-All are read at build time. The last two can be overridden as repository
-**variables** (Settings → Secrets and variables → Actions → Variables); they
-fall back to their defaults when unset.
+All are read at build time. Each can be overridden as a repository
+**variable** (Settings → Secrets and variables → Actions → Variables). For a
+custom domain set `NEXT_PUBLIC_SITE_URL` to the domain and
+`NEXT_PUBLIC_BASE_PATH` to a single space — the workflow trims it to nothing,
+and everything sits at the root.
 
 ## Shape of the source
 
