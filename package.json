@@ -8,9 +8,7 @@
     "build": "next build",
     "preview": "npx --yes serve out -l 4173",
     "typecheck": "tsc --noEmit",
-    "lint": "oxlint src",
-    "preview:cf": "wrangler pages dev out",
-    "deploy": "wrangler pages deploy"
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "^3.1.1",
@@ -26,7 +24,6 @@
     "remotion": "^4.0.495"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260101.0",
     "@stylexjs/babel-plugin": "^0.19.0",
     "@stylexjs/postcss-plugin": "^0.19.0",
     "@types/node": "^24.0.0",
@@ -35,8 +32,7 @@
     "autoprefixer": "^10.5.4",
     "babel-plugin-react-compiler": "^1.0.0",
     "oxlint": "^1.71.0",
-    "typescript": "^5.7.2",
-    "wrangler": "^4.0.0"
+    "typescript": "^5.7.2"
   },
   "packageManager": "pnpm@11.11.0"
 }

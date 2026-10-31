@@ -7,8 +7,8 @@
  * the other and wraps.
  *
  * The paths carry a trailing slash because the site is exported as files:
- * Cloudflare serves `/v2` from `v2/index.html`, and a link written without the
- * slash costs a redirect on every click.
+ * GitHub Pages serves `/v2` from `v2/index.html`, and a link written without
+ * the slash costs a redirect on every click.
  */
 export const REVISIONS = [
   { key: 'stage', label: 'V1', path: '/' },

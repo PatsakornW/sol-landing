@@ -19,6 +19,8 @@
  * thesvg is brand logos, not editorial photography.
  */
 
+import { asset } from '@/configs/configs';
+
 /** Truncated pubkey, the way the app's wallet pill renders one. */
 export const WALLET = '7xKf…9Qd2';
 
@@ -120,7 +122,7 @@ export const CARDS: readonly GridCard[] = [
   },
   {
     kind: 'headline',
-    cover: '/showcase/cover-politics.png',
+    cover: asset('/showcase/cover-politics.png'),
     kicker: 'Politics',
     title: 'Will turnout exceed 60% in the next general election?',
     pct: 64,
@@ -154,13 +156,13 @@ export const CARDS: readonly GridCard[] = [
 /** Discovery news rail — civic and sports, not token news. */
 export const NEWS = [
   {
-    cover: '/showcase/cover-news-civic.png',
+    cover: asset('/showcase/cover-news-civic.png'),
     kicker: 'Politics',
     title: 'Early voting totals revise turnout models higher',
     meta: '2h ago',
   },
   {
-    cover: '/showcase/cover-news-sports.png',
+    cover: asset('/showcase/cover-news-sports.png'),
     kicker: 'Sports',
     title: 'Championship final set after stoppage-time equalizer',
     meta: '5h ago',

@@ -319,7 +319,7 @@ const Navbar = memo(function Navbar() {
  * the composition stays independent of where the copy came from: the sample
  * rows in `motion/sample-data.ts` satisfy it too.
  */
-export type ShowcaseNewsItem = {
+type ShowcaseNewsItem = {
   cover: string;
   kicker: string;
   title: string;
@@ -998,38 +998,10 @@ const InsightCard = memo(function InsightCard({
 
 /* ── Composition ──────────────────────────────────────────────────────────── */
 
-/** Pads the live rows out to the rail's two slots from the sample set. */
-function railItems(news?: readonly ShowcaseNewsItem[]): readonly ShowcaseNewsItem[] {
-  if (!news || news.length === 0) return NEWS;
-  if (news.length >= NEWS.length) return news.slice(0, NEWS.length);
-  return [...news, ...NEWS.slice(news.length)];
-}
-
-/** Swaps the feed's photograph and copy into the one card that runs the cover
- *  variant, leaving its market numbers — which no feed can supply — alone. */
-function gridCards(headline?: ShowcaseNewsItem): readonly GridCard[] {
-  if (!headline) return CARDS;
-  return CARDS.map((card) =>
-    card.kind === 'headline'
-      ? { ...card, cover: headline.cover, kicker: headline.kicker, title: headline.title }
-      : card,
-  );
-}
-
-/**
- * `news` and `headline` arrive as Remotion input props rather than being
- * fetched here: `Thumbnail` re-renders this composition on every frame, so it
- * has to stay a pure function of its inputs. Both are undefined until the feed
- * lands, and the sample rows stand in until then.
- */
 export function HomeFlow({
-  news,
-  headline,
   cards,
   background = BG,
 }: {
-  news?: readonly ShowcaseNewsItem[];
-  headline?: ShowcaseNewsItem;
   /**
    * How many grid cards to draw. Defaults to all of them; a caller showing the
    * composition as scenery rather than as a screenshot can ask for fewer, and
@@ -1046,7 +1018,7 @@ export function HomeFlow({
   background?: string;
 }) {
   const frame = useCurrentFrame();
-  const grid = gridCards(headline);
+  const grid = CARDS;
   const shown = cards === undefined ? grid : grid.slice(0, Math.max(1, cards));
   const cardWidth =
     shown.length === grid.length
@@ -1061,7 +1033,7 @@ export function HomeFlow({
 
       <div style={{ padding: `${PAGE_TOP}px ${HOME_PAD}px 0` }}>
         <div style={{ display: 'flex', gap: HERO_GAP, height: HERO_H }}>
-          <NewsRail items={railItems(news)} />
+          <NewsRail items={NEWS} />
           <div
             style={{
               width: HERO_RIGHT,

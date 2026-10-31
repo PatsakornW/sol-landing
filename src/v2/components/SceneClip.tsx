@@ -2,7 +2,7 @@
 
 import * as stylex from '@stylexjs/stylex';
 import { ClipPlate } from '@/components/motion/ClipPlate';
-import { HomeFlow, type ShowcaseNewsItem } from '@/components/motion/showcase/HomeFlow';
+import { HomeFlow } from '@/components/motion/showcase/HomeFlow';
 import { usePlayOnceFrame, usePrefersReducedMotion } from '@/lib/remotion';
 import {
   HOME_DURATION,
@@ -92,13 +92,7 @@ const fit = stylex.create({
   }),
 });
 
-export default function SceneClip({
-  news,
-  headline,
-}: {
-  news?: readonly ShowcaseNewsItem[];
-  headline?: ShowcaseNewsItem;
-}) {
+export default function SceneClip() {
   const reducedMotion = usePrefersReducedMotion();
 
   /* The composition plays itself out once, behind the page. It used to be held
@@ -116,8 +110,6 @@ export default function SceneClip({
     <ClipPlate
       component={HomeFlow}
       inputProps={{
-        news,
-        headline,
         cards: GRID_CARDS,
         background: color.surface3,
       }}

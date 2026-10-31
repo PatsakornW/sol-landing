@@ -4,7 +4,7 @@ import * as stylex from '@stylexjs/stylex';
 
 import '@/styles/globals.css';
 
-import { AppConfig } from '@/configs/configs';
+import { AppConfig, asset } from '@/configs/configs';
 import { Providers } from '@/components/providers';
 import { revisionBody } from '@/styles/revision-body.styles';
 import { VersionToggle } from '@/v2/components/VersionToggle';
@@ -31,7 +31,7 @@ export function generateMetadata(): Metadata {
     title: { default: title, template: `%s | ${AppConfig.name}` },
     description,
     applicationName: AppConfig.name,
-    icons: { icon: '/favicon.svg', apple: '/apple-touch-icon.png' },
+    icons: { icon: asset('/favicon.svg'), apple: asset('/apple-touch-icon.png') },
     // A design revision, not a second public site — keep it out of the index.
     robots: { index: false, follow: false },
     openGraph: {
@@ -40,13 +40,13 @@ export function generateMetadata(): Metadata {
       locale: LOCALE,
       title,
       description,
-      images: [{ url: '/apple-touch-icon.png', width: 180, height: 180, alt: AppConfig.name }],
+      images: [{ url: asset('/apple-touch-icon.png'), width: 180, height: 180, alt: AppConfig.name }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: ['/apple-touch-icon.png'],
+      images: [asset('/apple-touch-icon.png')],
     },
   };
 }

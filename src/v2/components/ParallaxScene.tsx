@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 import * as stylex from '@stylexjs/stylex';
 import { PlateSkeleton } from '@/components/motion/PlateSkeleton';
 import { showcasePlate } from '@/components/motion/showcase/showcase-plate.styles';
-import { useShowcaseNews } from '@/lib/hooks/use-showcase-news';
 import { useCompactPlate, usePlate } from '@/lib/remotion';
 import { media } from '../../styles/breakpoints.stylex';
 import { color } from '../../styles/tokens.stylex';
@@ -106,7 +105,6 @@ const styles = stylex.create({
 export function ParallaxScene({ shot }: { shot: string }) {
   const plate = usePlate();
   const compact = useCompactPlate();
-  const { news, headline } = useShowcaseNews();
 
   return (
     <div {...stylex.props(styles.scene)} aria-hidden>
@@ -116,7 +114,7 @@ export function ParallaxScene({ shot }: { shot: string }) {
 
         <div {...stylex.props(styles.wall)}>
           {plate ? (
-            <SceneClip news={news} headline={headline} />
+            <SceneClip />
           ) : (
             <PlateSkeleton
               frame={[showcasePlate.frame, compact && showcasePlate.compactFrame]}

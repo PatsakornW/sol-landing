@@ -3,24 +3,22 @@ name: Deploy
 on:
   push:
     branches: [main]
-  pull_request:
   workflow_dispatch:
 
+# GitHub Pages deploys need an OIDC token and the pages scope.
 permissions:
   contents: read
-  deployments: write
+  pages: write
+  id-token: write
 
+# One deploy at a time; a newer push supersedes one still in flight.
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
-      NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
-      NEXT_PUBLIC_DOCS_URL: ${{ vars.NEXT_PUBLIC_DOCS_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,18 +31,31 @@ jobs:
         # Reads the version from `packageManager` in package.json.
 
       - run: pnpm install --frozen-lockfile
-
       - run: pnpm typecheck
       - run: pnpm lint
-      - run: pnpm build
 
-      # Pushes to main publish to production; pull requests get a preview
-      # deployment on their own branch alias.
-      - name: Deploy to Cloudflare Pages
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: cloudflare/wrangler-action@v3
+      # A project site is served under /<repo>; a custom domain is not. Either
+      # way the base path comes from the Pages configuration, not a hardcode.
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - run: pnpm build
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_DOCS_URL: ${{ vars.NEXT_PUBLIC_DOCS_URL }}
+
+      - uses: actions/upload-pages-artifact@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          command: pages deploy out --project-name=sol-landing --branch=${{ github.head_ref || github.ref_name }}
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

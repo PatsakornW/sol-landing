@@ -1,6 +1,6 @@
 # sol_market_landing
 
-Two landing-page designs for SolsMarket, built as a static site for Cloudflare
+Two landing-page designs for SolsMarket, built as a static site for GitHub
 Pages.
 
 | Route | Design |
@@ -14,75 +14,52 @@ The corner pill on either page steps to the other and wraps.
 
 Every page here is copy and prerendered clips: there is nothing to render per
 request. So `next.config.ts` sets `output: 'export'` and the whole site is
-written to `out/` at build time — Cloudflare serves it from the edge with no
-runtime at all, and there is no adapter between Next and Pages to keep in step
-with either.
+written to `out/` at build time — Pages serves the files as they are, with no
+runtime and no adapter between Next and the host to keep in step.
 
-The one thing that does need a server is the news rail, which reaches an
-upstream feed and proxies its images so the dither canvas can read their
-pixels — a canvas cannot read back a cross-origin bitmap. Those two endpoints
-live in `functions/`, which Pages runs as Workers beside the static files, so
-`/api/news-feed` and `/api/news-image` keep working. Without them the clips
-fall back to their sample rows, which is what you see in `next dev`.
+The clips inside the plates draw from the sample rows in
+`src/components/motion/sample-data.ts`. Nothing on the site reaches out at
+request time.
 
 ## Working on it
 
 ```bash
 pnpm install
-pnpm dev            # Next dev server on :3200 (no Functions, sample news)
+pnpm dev            # Next dev server on :3200
 pnpm build          # static export to out/
 pnpm preview        # serve out/ as plain files
-pnpm preview:cf     # wrangler: out/ + functions/, the real thing
 pnpm typecheck
 pnpm lint
 ```
-
-`pnpm preview:cf` is the one that exercises the Functions. Use it before a
-deploy if you have touched anything under `functions/`.
 
 ## Deploying
 
 Every push to `main` deploys through GitHub Actions
 (`.github/workflows/deploy.yml`): install, typecheck, lint, build, then
-`wrangler pages deploy` to the Cloudflare Pages project named in
-`wrangler.toml` (`sol-landing`). Pull requests get a preview deployment on
-their own branch alias.
+publish `out/` to GitHub Pages. Nothing to install or configure beyond one
+repository setting: **Settings → Pages → Build and deployment → Source** must
+be *GitHub Actions*.
 
-The workflow needs two repository **secrets**:
-
-- `CLOUDFLARE_API_TOKEN` — a token with the *Cloudflare Pages: Edit* permission
-- `CLOUDFLARE_ACCOUNT_ID` — from the Cloudflare dashboard sidebar
-
-and reads the three `NEXT_PUBLIC_*` variables below from repository
-**variables** (they fall back to their defaults when unset). Create the Pages
-project once beforehand, either in the dashboard (Workers & Pages → Create →
-Pages → Direct Upload) or from a terminal:
-
-```bash
-pnpm exec wrangler pages project create sol-landing --production-branch main
-```
-
-To deploy by hand instead:
-
-```bash
-pnpm build && pnpm deploy
-```
-
-`public/_headers` ships with the export and tells Pages to cache the
-fingerprinted bundles and the fonts forever, and nothing else.
+A project site is served under `/<repo>` (here `/sol-landing`), so the
+workflow asks `actions/configure-pages` for the base path and passes it to the
+build as `NEXT_PUBLIC_BASE_PATH`. `next.config.ts` turns that into Next's
+`basePath`, which `<Link>` and the router honour on their own; the few plain
+`<img src>` and metadata URLs go through `asset()` in `src/configs/configs.ts`
+to pick it up too. With a custom domain the base path comes back empty and
+everything sits at the root.
 
 ### Environment
 
-| Variable | Where | Default |
-|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | build | `https://solsmarket.xyz` |
-| `NEXT_PUBLIC_APP_URL` | build | `http://localhost:3000` |
-| `NEXT_PUBLIC_DOCS_URL` | build | `https://docs.solsmarket.xyz` |
-| `NEWS_API_PROXY_TARGET` | Pages Function | the upstream news API |
+| Variable | Default |
+|---|---|
+| `NEXT_PUBLIC_BASE_PATH` | empty — set by the workflow from the Pages configuration |
+| `NEXT_PUBLIC_SITE_URL` | `https://solsmarket.xyz` — set by the workflow to the Pages URL |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` |
+| `NEXT_PUBLIC_DOCS_URL` | `https://docs.solsmarket.xyz` |
 
-The first three are read at build time, so they belong in the Pages build
-environment. The last is read per request by `functions/api/news-feed.ts` and
-belongs in the Pages runtime environment.
+All are read at build time. The last two can be overridden as repository
+**variables** (Settings → Secrets and variables → Actions → Variables); they
+fall back to their defaults when unset.
 
 ## Shape of the source
 
@@ -92,8 +69,7 @@ src/app/(v2)/     the parallax design, at /v2
 src/v1/           everything the stage design owns — its chrome, blocks, theme, copy
 src/v2/           the same for the parallax design
 src/components/   shared: brand, waitlist, access dialog, the Remotion clips
-src/lib/          news feed, dither, Remotion helpers, the design switch
-functions/        the two Cloudflare Pages Functions
+src/lib/          dither, Remotion helpers, the design switch
 ```
 
 Each design is a **separate document**: its own root layout, faces, palette,

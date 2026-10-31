@@ -34,13 +34,6 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   return pending;
 }
 
-/** Warm the dither decoder so a rotate does not flash empty paper. */
-export function prefetchImage(src: string): void {
-  loadImage(src).catch(() => {
-    /* The plate will retry on paint. */
-  });
-}
-
 function parseInk(hex: string): readonly [number, number, number] {
   const n = hex.replace('#', '');
   const v = Number.parseInt(n.length === 3 ? n.replace(/(.)/g, '$1$1') : n, 16);

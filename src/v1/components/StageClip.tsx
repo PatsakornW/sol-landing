@@ -7,7 +7,6 @@ import { PlateSkeleton } from '@/components/motion/PlateSkeleton';
 import { HOME_DURATION, HOME_FPS } from '@/components/motion/showcase/home-timing.stylex';
 import { showcasePlate } from '@/components/motion/showcase/showcase-plate.styles';
 import { useRevealed } from '@/lib/hooks/use-revealed';
-import { useShowcaseNews } from '@/lib/hooks/use-showcase-news';
 import {
   useCompactPlate,
   usePlate,
@@ -68,7 +67,6 @@ export function StageClip({
   const plate = usePlate();
   const compact = useCompactPlate();
   const reducedMotion = usePrefersReducedMotion();
-  const { news, headline } = useShowcaseNews();
 
   const frame = usePlayOnceFrame(HOME_DURATION, HOME_FPS, {
     start: revealed && plate,
@@ -81,8 +79,6 @@ export function StageClip({
         <ShowcasePlate
           frame={frame}
           compact={compact}
-          news={news}
-          headline={headline}
           revealed={revealed}
         />
       ) : (

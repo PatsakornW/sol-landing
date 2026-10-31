@@ -24,6 +24,7 @@ import {
   text,
   YES,
 } from '@/components/motion/app-tokens';
+import { asset } from '@/configs/configs';
 import { CONNECT, REDEEM, TRADE, WALLET } from '@/components/motion/sample-data';
 import { PlateDitherField, PRINT_PAPER } from '@/components/motion/PlateDither';
 import { FLOW_WIDTH } from './flow-timing.stylex';
@@ -199,7 +200,7 @@ export function ConnectFlow() {
           borderColor: pick > 0.5 ? PHANTOM : BORDER,
         })}
       >
-        <img src="/phantom-icon.png" alt="" width={18} height={18} style={{ borderRadius: 4 }} />
+        <img src={asset('/phantom-icon.png')} alt="" width={18} height={18} style={{ borderRadius: 4 }} />
         <span style={text(12, pick > 0.5 ? TEXT : TEXT_SECONDARY, 600)}>{CONNECT.provider}</span>
         <span style={{ ...text(10, TEXT_MUTED), marginLeft: 'auto' }}>{CONNECT.kind}</span>
       </div>

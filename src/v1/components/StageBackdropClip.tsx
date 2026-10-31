@@ -3,7 +3,6 @@
 import * as stylex from '@stylexjs/stylex';
 import { ClipPlate } from '@/components/motion/ClipPlate';
 import { HomeFlow } from '@/components/motion/showcase/HomeFlow';
-import { useShowcaseNews } from '@/lib/hooks/use-showcase-news';
 import { usePlayOnceFrame, usePrefersReducedMotion } from '@/lib/remotion';
 import {
   HOME_DURATION,
@@ -92,7 +91,6 @@ const fit = stylex.create({
  * playing behind them.
  */
 export default function StageBackdropClip() {
-  const { news, headline } = useShowcaseNews();
   const reducedMotion = usePrefersReducedMotion();
 
   /* The composition plays itself out once, behind the headline. It used to be
@@ -110,8 +108,6 @@ export default function StageBackdropClip() {
     <ClipPlate
       component={HomeFlow}
       inputProps={{
-        news,
-        headline,
         cards: GRID_CARDS,
         background: color.surface3,
       }}

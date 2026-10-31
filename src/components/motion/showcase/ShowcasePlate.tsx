@@ -1,7 +1,7 @@
 'use client';
 
 import { ClipPlate } from '@/components/motion/ClipPlate';
-import { HomeFlow, type ShowcaseNewsItem } from './HomeFlow';
+import { HomeFlow } from './HomeFlow';
 import { showcaseCrop, showcasePlate } from './showcase-plate.styles';
 import {
   COMPACT_CROP_TOP,
@@ -35,15 +35,6 @@ export interface ShowcasePlateProps {
    * same scroll — only the window onto it changes.
    */
   compact: boolean;
-  /**
-   * Today's slice of the news feed for the rail inside the clip. Fetched by
-   * `MarketPreview` rather than here: the clip is re-rendered on every frame,
-   * so it must stay a pure function of its props. Undefined until the feed
-   * lands, and the composition falls back to its sample rows.
-   */
-  news?: readonly ShowcaseNewsItem[];
-  /** The feed row behind the grid's headline card, same source and same day. */
-  headline?: ShowcaseNewsItem;
   /** Latched by the section on scroll — drives the frame's one entrance. */
   revealed: boolean;
 }
@@ -64,8 +55,6 @@ function scrollProgress(frame: number): number {
 export default function ShowcasePlate({
   frame,
   compact,
-  news,
-  headline,
   revealed,
 }: ShowcasePlateProps) {
   // Composition-pixel offset of the crop: 0 shows the navbar, the settled value
@@ -76,7 +65,7 @@ export default function ShowcasePlate({
   return (
     <ClipPlate
       component={HomeFlow}
-      inputProps={{ news, headline }}
+      inputProps={{}}
       frame={frame}
       durationInFrames={HOME_DURATION}
       fps={HOME_FPS}
