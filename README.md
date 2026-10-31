@@ -36,9 +36,9 @@ pnpm lint
 
 Every push to `main` deploys through GitHub Actions
 (`.github/workflows/deploy.yml`): install, typecheck, lint, build, then
-publish `out/` to GitHub Pages. Nothing to install or configure beyond one
-repository setting: **Settings → Pages → Build and deployment → Source** must
-be *GitHub Actions*.
+publish `out/` to GitHub Pages. Nothing to install or configure: the first
+run enables Pages for the repository with GitHub Actions as its source
+(`enablement: true` on `actions/configure-pages`).
 
 A project site is served under `/<repo>` (here `/sol-landing`), so the
 workflow asks `actions/configure-pages` for the base path and passes it to the

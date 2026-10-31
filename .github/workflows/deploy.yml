@@ -36,8 +36,13 @@ jobs:
 
       # A project site is served under /<repo>; a custom domain is not. Either
       # way the base path comes from the Pages configuration, not a hardcode.
+      # `enablement` turns Pages on for the repository the first time this
+      # runs, with GitHub Actions as the source, so no setting has to be
+      # clicked beforehand.
       - id: pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - run: pnpm build
         env:
