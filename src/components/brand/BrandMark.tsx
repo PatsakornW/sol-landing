@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import * as stylex from '@stylexjs/stylex';
+import type { StyleXStyles } from '@stylexjs/stylex';
 import { color, font } from '../../styles/tokens.stylex';
 
 /** Gaps pitched about cy=32 — slightly inset from poles, thinner cuts. */
@@ -20,7 +21,17 @@ export type BrandMarkProps = {
    * accessibility tree.
    */
   label?: string;
+  /**
+   * Crop the square to the two orbs, so `size` is the mark's height and its
+   * width follows. For lockups that size the mark by the line it sits on.
+   */
+  tight?: boolean;
+  /** Sizing the caller owns — e.g. a height that steps with the viewport. */
+  style?: StyleXStyles;
 };
+
+/* The two orbs' bounding box inside the 64-unit square. */
+const TIGHT_BOX = { x: 4, y: 13, width: 56, height: 38 } as const;
 
 /**
  * SolsMarket mark — striped purple orb behind a solid blue orb.
@@ -31,20 +42,22 @@ export type BrandMarkProps = {
  * the props compiled, rendered class names, and did nothing. A prop that cannot
  * change the output is worse than no prop: it reads as a capability. Gone.
  */
-export function BrandMark({ size = 32, label }: BrandMarkProps) {
+export function BrandMark({ size = 32, label, tight = false, style }: BrandMarkProps) {
   const uid = useId().replace(/:/g, '');
   const maskId = `sm-purple-mask-${uid}`;
+  const box = tight ? TIGHT_BOX : { x: 0, y: 0, width: 64, height: 64 };
 
   return (
     <svg
-      viewBox="0 0 64 64"
-      width={size}
+      viewBox={`${box.x} ${box.y} ${box.width} ${box.height}`}
+      width={(size * box.width) / box.height}
       height={size}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
+      {...stylex.props(style)}
     >
       <defs>
         <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
@@ -58,6 +71,42 @@ export function BrandMark({ size = 32, label }: BrandMarkProps) {
         <circle cx="23" cy="32" r="19" fill={ORB_BACK} mask={`url(#${maskId})`} />
         <circle cx="41" cy="32" r="19" fill={ORB_FRONT} />
       </g>
+    </svg>
+  );
+}
+
+const orbStyles = stylex.create({
+  svg: { display: 'block', height: 'auto' },
+});
+
+/**
+ * The mark's striped orb on its own — the half that stays pink.
+ *
+ * Cut with the same mask as `BrandMark`, so a striped circle drifting across a
+ * page is recognisably the one in the logo. Fills its container's width.
+ */
+export function BrandOrb() {
+  const uid = useId().replace(/:/g, '');
+  const maskId = `sm-orb-mask-${uid}`;
+
+  return (
+    <svg
+      viewBox="4 13 38 38"
+      width="100%"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...stylex.props(orbStyles.svg)}
+    >
+      <defs>
+        <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
+          <circle cx="23" cy="32" r="19" fill="#fff" />
+          {PURPLE_GAP_YS.map((y) => (
+            <rect key={y} x="4" y={y} width="38" height={PURPLE_GAP_HEIGHT} fill="#000" />
+          ))}
+        </mask>
+      </defs>
+      <circle cx="23" cy="32" r="19" fill={ORB_BACK} mask={`url(#${maskId})`} />
     </svg>
   );
 }

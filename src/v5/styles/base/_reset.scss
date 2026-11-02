@@ -1,0 +1,170 @@
+@use '../abstracts' as *;
+
+// The element reset is scoped to the page frame, through `:where()` so it adds
+// no specificity over the page's own classes. This sheet is not
+// in a cascade layer, and the site's StyleX rules are, so an unscoped `*`
+// here would beat every one of them: the corner version switch, which sits
+// outside the frame, lost its padding and colours that way. The document
+// itself keeps the few rules that belong to it.
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: var(--bg);
+
+  // Reserve scrollbar space so layout doesn't shift when content height changes.
+  // On overlay-scrollbar OSes (macOS, mobile) this is a no-op.
+  // The gutter area is invisible because html background matches body.
+  scrollbar-gutter: stable;
+
+  // Offset anchor/programmatic scrolling so targets surface below the sticky
+  // landing nav (~64px) plus a small gap.
+  scroll-padding-top: calc(64px + 12px);
+
+  // Smoothly animate in-page anchor jumps (e.g. the "How it works" CTAs).
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  font-family: $font-family;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  color: var(--text-1);
+  background: var(--bg);
+  letter-spacing: $letter-spacing-base;
+  // Suppress horizontal overflow at the body level (not html, which breaks
+  // position: sticky). Uses `clip` instead of `hidden` to avoid creating
+  // a scroll container; native scrollbar and accessibility preserved.
+  overflow-x: clip;
+}
+
+:where(.site) {
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    touch-action: manipulation;
+  }
+
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: $font-weight-semibold;
+    line-height: $line-height-tight;
+    color: var(--text-1);
+  }
+}
+
+// Keep keyboard focus visible even when a component has no custom focus style.
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: oklch(0.6022 0.2168 259.63 / 0.35);
+  color: var(--text-1);
+}
+// Native scrollbars — Fluid Functionalism's ramp, the one the console and the
+// admin dashboard paint too: `--overlay` at 8% at rest, 12% on hover, 16% under
+// the drag, on a 10px track whose thumb is a 4px sliver inset 1px from the edge
+// it hugs and 5px toward the content by a transparent border plus
+// `background-clip: content-box`. Track and corner paint nothing.
+//
+// Both halves live in this one block, scoped to a fine pointer. The standard
+// properties are not `auto`, which is what makes a browser that understands
+// them ignore `::-webkit-scrollbar` — one system with a fallback for Safari
+// before 18.2, not two ramps that drift. A touch-primary device keeps its
+// platform bar.
+@media (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--overlay) / 0.08) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--overlay) / 0.08);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 9999px;
+
+    &:vertical {
+      border-left-width: 1px;
+      border-right-width: 5px;
+    }
+
+    &:horizontal {
+      border-top-width: 1px;
+      border-bottom-width: 5px;
+    }
+
+    &:hover {
+      background-color: rgb(var(--overlay) / 0.12);
+    }
+
+    &:active {
+      background-color: rgb(var(--overlay) / 0.16);
+    }
+  }
+}

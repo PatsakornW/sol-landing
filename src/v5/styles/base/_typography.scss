@@ -1,0 +1,41 @@
+// Dark theme — Inter everywhere (headings share the body stack).
+// Scoped to the page frame for the reason given in _reset.scss.
+
+@use '../abstracts' as *;
+
+// Inter is a self-hosted variable font (base/_fonts.scss).
+:where(.site) {
+  h1 {
+    font-family: $font-family-heading;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-semibold;
+    letter-spacing: $letter-spacing-tight;
+    line-height: $line-height-tight;
+    color: var(--text-1);
+  }
+
+  h2 {
+    font-family: $font-family-heading;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    letter-spacing: $letter-spacing-tight;
+    line-height: $line-height-snug;
+    color: var(--text-1);
+  }
+
+  h3 {
+    font-family: $font-family-heading;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-normal;
+    line-height: $line-height-snug;
+    color: var(--text-1);
+  }
+
+  h4 {
+    font-family: $font-family-body;
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: var(--text-1);
+  }
+}

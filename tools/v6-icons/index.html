@@ -1,0 +1,468 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>V6 icon renderer</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Changa+One&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; background: transparent; }
+  canvas { display: block; }
+  .probe { position: absolute; opacity: 0; font-family: 'Changa One'; }
+</style>
+<span class="probe">YES NO $ ? AI</span>
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+  import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+  const q = new URLSearchParams(location.search);
+  const NAME = q.get('icon') || 'yes';
+  const SIZE = +(q.get('size') || 1024);
+
+  const P = {
+    ink: '#1C1830', cream: '#F1EDE6', blue: '#1E69F6', violet: '#6D2FD6', purple: '#DC74EC',
+    green: '#17A85F', coral: '#EF4F3E', yellow: '#F2BE2A', navy: '#241F4D', orange: '#F7931A',
+    lilac: '#D3C9F5', white: '#FFFFFF',
+  };
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1);
+  renderer.setSize(SIZE, SIZE);
+  renderer.setClearColor(0x000000, 0);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  document.body.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
+  camera.position.set(0, 0, 8.5);
+
+  const key = new THREE.DirectionalLight(0xffffff, 2.2);
+  key.position.set(-3, 5, 6);
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xdcd4ff, 0.8);
+  fill.position.set(5, -2, 4);
+  scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xffffff, 1.2);
+  rim.position.set(2, 4, -6);
+  scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+
+  /* Candy plastic: a coloured, slightly rough body under a glossy clearcoat. */
+  const candy = (color, extra = {}) =>
+    new THREE.MeshPhysicalMaterial({ color, roughness: 0.42, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 0.9, ...extra });
+  const metal = (color, extra = {}) =>
+    new THREE.MeshPhysicalMaterial({ color, roughness: 0.28, metalness: 1, envMapIntensity: 1.1, ...extra });
+
+  /* A label painted on a canvas, for coin faces and cube sides. */
+  function labelTexture(text, { color = P.cream, size = 300, weight = 400, font = 'Changa One' } = {}) {
+    const c = document.createElement('canvas');
+    c.width = c.height = 512;
+    const g = c.getContext('2d');
+    g.clearRect(0, 0, 512, 512);
+    g.fillStyle = color;
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    g.font = `${weight} ${size}px "${font}", Impact, sans-serif`;
+    g.fillText(text, 256, 268);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+  }
+  function decal(text, w, opts) {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, w), new THREE.MeshBasicMaterial({ map: labelTexture(text, opts), transparent: true, depthWrite: false }));
+    return m;
+  }
+
+  function coin({ color, text, textColor = P.cream, edge, textSize = 300, r = 1, th = 0.24, ridged = true }) {
+    const g = new THREE.Group();
+    const bodyMat = candy(color);
+    const edgeMat = candy(edge || color);
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(r, r, th, 96, 1, false), bodyMat);
+    body.rotation.x = Math.PI / 2;
+    g.add(body);
+    for (const s of [1, -1]) {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(r * 0.985, 0.045, 24, 96), edgeMat);
+      ring.position.z = s * (th / 2);
+      g.add(ring);
+      const inner = new THREE.Mesh(new THREE.TorusGeometry(r * 0.78, 0.022, 16, 96), edgeMat);
+      inner.position.z = s * (th / 2 + 0.005);
+      g.add(inner);
+      const d = decal(text, r * 1.5, { color: textColor, size: textSize });
+      d.position.z = s * (th / 2 + 0.012);
+      if (s < 0) d.rotation.y = Math.PI;
+      g.add(d);
+    }
+    if (ridged) {
+      const n = 48;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2;
+        const rb = new THREE.Mesh(new THREE.BoxGeometry(0.03, th * 0.82, 0.06), edgeMat);
+        rb.position.set(Math.cos(a) * r, Math.sin(a) * r, 0);
+        rb.rotation.z = a + Math.PI / 2;
+        rb.rotation.x = Math.PI / 2;
+        g.add(rb);
+      }
+    }
+    return g;
+  }
+
+  function cube({ color, text, textColor = P.cream, size = 1.7 }) {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new RoundedBoxGeometry(size, size, size, 8, 0.22), candy(color)));
+    const faces = [
+      [0, 0, 1, [0, 0, 0]],
+      [1, 0, 0, [0, Math.PI / 2, 0]],
+      [0, 1, 0, [-Math.PI / 2, 0, 0]],
+    ];
+    for (const [x, y, z, rot] of faces) {
+      const d = decal(text, size * 0.8, { color: textColor, size: 330 });
+      d.position.set(x, y, z).multiplyScalar(size / 2 + 0.01);
+      d.rotation.set(...rot);
+      g.add(d);
+    }
+    return g;
+  }
+
+  function extruded(shape, depth, mat, bevel = 0.06) {
+    const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 6, curveSegments: 24 });
+    geo.center();
+    return new THREE.Mesh(geo, mat);
+  }
+
+  function arrow({ color }) {
+    const s = new THREE.Shape();
+    s.moveTo(0, 1.1); s.lineTo(1.0, 0.1); s.lineTo(0.42, 0.1); s.lineTo(0.42, -1.1); s.lineTo(-0.42, -1.1); s.lineTo(-0.42, 0.1); s.lineTo(-1.0, 0.1); s.closePath();
+    return extruded(s, 0.42, candy(color));
+  }
+
+  function bolt({ color }) {
+    const s = new THREE.Shape();
+    s.moveTo(0.25, 1.25); s.lineTo(-0.55, 0.05); s.lineTo(0.0, 0.05); s.lineTo(-0.3, -1.25); s.lineTo(0.6, 0.15); s.lineTo(0.05, 0.15); s.closePath();
+    return extruded(s, 0.42, candy(color), 0.05);
+  }
+
+  function vault({ color = P.navy, accent = P.yellow }) {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new RoundedBoxGeometry(2.0, 2.0, 1.4, 8, 0.16), candy(color)));
+    const door = new THREE.Mesh(new RoundedBoxGeometry(1.6, 1.6, 0.2, 6, 0.1), candy(P.violet));
+    door.position.z = 0.72;
+    g.add(door);
+    const dial = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.2, 48), metal(P.cream));
+    dial.rotation.x = Math.PI / 2;
+    dial.position.set(-0.25, 0.1, 0.9);
+    g.add(dial);
+    const dialRing = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.05, 16, 48), candy(accent));
+    dialRing.position.set(-0.25, 0.1, 1.0);
+    g.add(dialRing);
+    for (let i = 0; i < 3; i++) {
+      const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.62, 0.1), candy(accent));
+      spoke.position.set(-0.25, 0.1, 1.02);
+      spoke.rotation.z = (i / 3) * Math.PI;
+      g.add(spoke);
+    }
+    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.7, 0.14), metal(P.cream));
+    handle.position.set(0.5, 0.0, 0.92);
+    g.add(handle);
+    for (const y of [0.55, -0.55]) {
+      const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.4, 24), metal(P.cream));
+      hinge.position.set(-0.98, y, 0.6);
+      g.add(hinge);
+    }
+    return g;
+  }
+
+  function keyIcon({ color = P.yellow }) {
+    const g = new THREE.Group();
+    const m = metal(color, { roughness: 0.3 });
+    const bow = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.2, 24, 64), m);
+    bow.position.y = 0.75;
+    g.add(bow);
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 1.9, 32), m);
+    shaft.position.y = -0.55;
+    g.add(shaft);
+    for (const [y, w] of [[-1.25, 0.5], [-0.95, 0.38]]) {
+      const tooth = new THREE.Mesh(new RoundedBoxGeometry(w, 0.22, 0.3, 4, 0.06), m);
+      tooth.position.set(0.17 + w / 2 - 0.08, y, 0);
+      g.add(tooth);
+    }
+    return g;
+  }
+
+  function gavel({ head = P.navy, handle = P.cream, base = P.violet }) {
+    const g = new THREE.Group();
+    const h = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1.5, 48), candy(head));
+    h.rotation.z = Math.PI / 2;
+    h.position.set(0.1, 0.55, 0);
+    g.add(h);
+    for (const x of [-0.65, 0.85]) {
+      const cap = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.06, 16, 48), candy(P.yellow));
+      cap.rotation.y = Math.PI / 2;
+      cap.position.set(x, 0.55, 0);
+      g.add(cap);
+    }
+    const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 1.7, 32), candy(handle));
+    stick.position.set(0.1, -0.35, 0);
+    stick.rotation.z = -0.1;
+    g.add(stick);
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.85, 0.22, 48), candy(base));
+    b.position.set(0.0, -1.2, 0);
+    g.add(b);
+    return g;
+  }
+
+  function ballot({ color = P.blue }) {
+    const g = new THREE.Group();
+    const box = new THREE.Mesh(new RoundedBoxGeometry(2.0, 1.5, 1.4, 8, 0.14), candy(color));
+    box.position.y = -0.35;
+    g.add(box);
+    const slot = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.06, 0.18), candy(P.ink));
+    slot.position.set(0, 0.42, 0);
+    g.add(slot);
+    const paper = new THREE.Mesh(new RoundedBoxGeometry(0.95, 1.2, 0.06, 4, 0.03), candy(P.cream, { roughness: 0.6 }));
+    paper.position.set(0.0, 0.85, 0.0);
+    paper.rotation.set(0, 0, -0.12);
+    g.add(paper);
+    const tick = decal('✓', 0.6, { color: P.green, size: 380, font: 'Arial' });
+    tick.position.set(0.0, 0.95, 0.035);
+    tick.rotation.z = -0.12;
+    g.add(tick);
+    const lip = new THREE.Mesh(new RoundedBoxGeometry(2.1, 0.18, 1.5, 4, 0.06), candy(P.ink));
+    lip.position.y = 0.42;
+    g.add(lip);
+    return g;
+  }
+
+  function ball({ color = P.orange }) {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(1.1, 64, 64), candy(color)));
+    const seam = () => new THREE.Mesh(new THREE.TorusGeometry(1.1, 0.03, 12, 96), candy(P.ink));
+    const a = seam(); g.add(a);
+    const b = seam(); b.rotation.y = Math.PI / 2; g.add(b);
+    const c = seam(); c.rotation.x = Math.PI / 2; c.rotation.y = 0.7; g.add(c);
+    return g;
+  }
+
+  function tag({ color = P.coral }) {
+    const s = new THREE.Shape();
+    s.moveTo(-1.1, 0.0); s.lineTo(-0.45, 0.7); s.lineTo(1.1, 0.7); s.lineTo(1.1, -0.7); s.lineTo(-0.45, -0.7); s.closePath();
+    const hole = new THREE.Path();
+    hole.absarc(-0.62, 0, 0.14, 0, Math.PI * 2, true);
+    s.holes.push(hole);
+    const g = new THREE.Group();
+    g.add(extruded(s, 0.3, candy(color), 0.05));
+    const d = decal('%', 1.0, { color: P.cream, size: 360 });
+    d.position.set(0.3, 0, 0.22);
+    g.add(d);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.04, 12, 48), metal(P.cream));
+    ring.position.set(-0.62, 0.0, 0);
+    ring.rotation.y = Math.PI / 2;
+    g.add(ring);
+    return g;
+  }
+
+  function bank({ color = P.cream, accent = P.navy }) {
+    const g = new THREE.Group();
+    const base = new THREE.Mesh(new RoundedBoxGeometry(2.3, 0.26, 1.3, 4, 0.06), candy(accent));
+    base.position.y = -1.0;
+    g.add(base);
+    const step = new THREE.Mesh(new RoundedBoxGeometry(2.0, 0.2, 1.1, 4, 0.05), candy(color));
+    step.position.y = -0.78;
+    g.add(step);
+    for (const x of [-0.72, -0.24, 0.24, 0.72]) {
+      const col = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 1.2, 32), candy(color));
+      col.position.set(x, -0.08, 0.3);
+      g.add(col);
+    }
+    const back = new THREE.Mesh(new RoundedBoxGeometry(1.9, 1.2, 0.5, 4, 0.05), candy(accent));
+    back.position.set(0, -0.08, -0.2);
+    g.add(back);
+    const beam = new THREE.Mesh(new RoundedBoxGeometry(2.1, 0.22, 1.15, 4, 0.05), candy(color));
+    beam.position.y = 0.62;
+    g.add(beam);
+    const tri = new THREE.Shape();
+    tri.moveTo(-1.1, 0); tri.lineTo(1.1, 0); tri.lineTo(0, 0.6); tri.closePath();
+    const ped = extruded(tri, 1.1, candy(color), 0.04);
+    ped.position.y = 1.02;
+    g.add(ped);
+    return g;
+  }
+
+  function barrel({ color = P.navy, rib = P.yellow }) {
+    const g = new THREE.Group();
+    const pts = [];
+    for (let i = 0; i <= 24; i++) {
+      const t = i / 24;
+      const y = -1.1 + t * 2.2;
+      pts.push(new THREE.Vector2(0.78 + Math.sin(t * Math.PI) * 0.12, y));
+    }
+    const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 64), candy(color));
+    g.add(body);
+    for (const y of [1.1, -1.1]) {
+      const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.06, 64), candy(color));
+      lid.position.y = y;
+      g.add(lid);
+    }
+    for (const y of [0.55, -0.55]) {
+      const r = new THREE.Mesh(new THREE.TorusGeometry(0.87, 0.06, 16, 80), candy(rib));
+      r.rotation.x = Math.PI / 2;
+      r.position.y = y;
+      g.add(r);
+    }
+    const d = decal('OIL', 1.1, { color: P.cream, size: 230 });
+    d.position.set(0, 0.0, 0.9);
+    g.add(d);
+    return g;
+  }
+
+  function gold({ color = P.yellow }) {
+    const g = new THREE.Group();
+    const s = new THREE.Shape();
+    s.moveTo(-0.9, -0.3); s.lineTo(0.9, -0.3); s.lineTo(0.7, 0.3); s.lineTo(-0.7, 0.3); s.closePath();
+    const bar = () => extruded(s, 0.9, metal(color, { roughness: 0.22 }), 0.04);
+    const a = bar(); a.position.set(-0.55, -0.55, 0.2); g.add(a);
+    const b = bar(); b.position.set(0.6, -0.55, -0.3); b.rotation.y = 0.35; g.add(b);
+    const c = bar(); c.position.set(0.0, 0.1, -0.05); c.rotation.y = -0.2; g.add(c);
+    return g;
+  }
+
+  function chip({ color = P.ink, top = P.violet }) {
+    const g = new THREE.Group();
+    g.add(new THREE.Mesh(new RoundedBoxGeometry(1.8, 1.8, 0.32, 6, 0.1), candy(color)));
+    const plate = new THREE.Mesh(new RoundedBoxGeometry(1.1, 1.1, 0.12, 6, 0.06), candy(top));
+    plate.position.z = 0.2;
+    g.add(plate);
+    const d = decal('AI', 0.9, { color: P.cream, size: 300 });
+    d.position.z = 0.27;
+    g.add(d);
+    const pin = metal(P.cream);
+    for (let i = 0; i < 6; i++) {
+      const o = -0.75 + i * 0.3;
+      for (const [x, y, rz] of [[o, 1.05, 0], [o, -1.05, 0], [1.05, o, Math.PI / 2], [-1.05, o, Math.PI / 2]]) {
+        const p = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.3, 0.12), pin);
+        p.position.set(x, y, 0);
+        p.rotation.z = rz;
+        g.add(p);
+      }
+    }
+    return g;
+  }
+
+  function bell({ color = P.yellow }) {
+    const g = new THREE.Group();
+    const pts = [new THREE.Vector2(0.0, 1.0), new THREE.Vector2(0.3, 0.95), new THREE.Vector2(0.5, 0.6), new THREE.Vector2(0.62, 0.1), new THREE.Vector2(0.72, -0.4), new THREE.Vector2(1.0, -0.62), new THREE.Vector2(1.0, -0.8), new THREE.Vector2(0.0, -0.8)];
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(pts, 64), candy(color)));
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.2, 32, 32), candy(P.ink));
+    knob.position.y = 1.05;
+    g.add(knob);
+    const clapper = new THREE.Mesh(new THREE.SphereGeometry(0.22, 32, 32), candy(P.ink));
+    clapper.position.y = -0.95;
+    g.add(clapper);
+    return g;
+  }
+
+  function clapper({ color = P.ink }) {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new RoundedBoxGeometry(2.0, 1.3, 0.3, 6, 0.08), candy(color));
+    body.position.y = -0.45;
+    g.add(body);
+    const stripes = (w, h) => {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = P.cream; ctx.fillRect(0, 0, 512, 128);
+      ctx.fillStyle = P.ink;
+      for (let x = -64; x < 560; x += 128) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + 64, 0); ctx.lineTo(x + 32, 128); ctx.lineTo(x - 32, 128); ctx.fill(); }
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+      return new THREE.MeshPhysicalMaterial({ map: t, roughness: 0.4, clearcoat: 1 });
+    };
+    const bottomStripe = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.34, 0.31), stripes());
+    bottomStripe.position.y = 0.37;
+    g.add(bottomStripe);
+    const top = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.34, 0.31), stripes());
+    top.geometry.translate(1.0, 0.17, 0);
+    top.position.set(-1.0, 0.55, 0);
+    top.rotation.z = 0.35;
+    g.add(top);
+    return g;
+  }
+
+  function sun({ }) {
+    /* The brand mark in the round: a cut purple orb behind a blue one. */
+    const g = new THREE.Group();
+    const r = 0.95;
+    const blue = new THREE.Mesh(new THREE.SphereGeometry(r, 96, 96), candy(P.blue));
+    blue.position.set(0.5, 0, 0.35);
+    g.add(blue);
+    const c = document.createElement('canvas');
+    c.width = 64; c.height = 512;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 64, 512);
+    ctx.fillStyle = '#000';
+    for (const y of [18, 25, 32, 39, 46]) ctx.fillRect(0, ((y - 13) / 38) * 512, 64, (2.25 / 38) * 512);
+    const alpha = new THREE.CanvasTexture(c);
+    const purple = new THREE.Mesh(new THREE.SphereGeometry(r, 96, 96), candy(P.purple, { alphaMap: alpha, transparent: true, alphaTest: 0.5, side: THREE.DoubleSide }));
+    purple.position.set(-0.5, 0, -0.35);
+    g.add(purple);
+    return g;
+  }
+
+  const ICONS = {
+    yes: { build: () => coin({ color: P.green, text: 'YES', edge: '#0E8A4A', textSize: 230 }), rot: [0.45, -0.35, 0.15] },
+    no: { build: () => coin({ color: P.coral, text: 'NO', edge: '#C83A2B', textSize: 260 }), rot: [0.4, 0.4, -0.15] },
+    usdc: { build: () => coin({ color: P.blue, text: '$', edge: '#1554C8', textSize: 360 }), rot: [0.35, -0.55, 0.1] },
+    sol: { build: () => coin({ color: P.violet, text: 'SOL', edge: '#5322A8', textSize: 230 }), rot: [0.5, 0.3, 0.1] },
+    btc: { build: () => coin({ color: P.orange, text: 'B', edge: '#D97A0C', textSize: 360 }), rot: [0.35, -0.5, 0.1] },
+    question: { build: () => cube({ color: P.violet, text: '?' }), rot: [0.5, -0.65, 0.0] },
+    up: { build: () => arrow({ color: P.green }), rot: [0.35, -0.5, 0.2] },
+    bolt: { build: () => bolt({ color: P.yellow }), rot: [0.3, -0.45, 0.1] },
+    vault: { build: () => vault({}), rot: [0.3, -0.55, 0.0] },
+    key: { build: () => keyIcon({}), rot: [0.3, -0.4, -0.5] },
+    gavel: { build: () => gavel({}), rot: [0.35, -0.5, 0.0] },
+    ballot: { build: () => ballot({}), rot: [0.35, -0.5, 0.0] },
+    ball: { build: () => ball({}), rot: [0.4, -0.5, 0.2] },
+    tag: { build: () => tag({}), rot: [0.3, -0.4, 0.25] },
+    bank: { build: () => bank({}), rot: [0.3, -0.5, 0.0] },
+    barrel: { build: () => barrel({}), rot: [0.3, -0.4, 0.2] },
+    gold: { build: () => gold({}), rot: [0.5, -0.3, 0.0] },
+    chip: { build: () => chip({}), rot: [0.45, -0.5, 0.1] },
+    bell: { build: () => bell({}), rot: [0.25, -0.4, 0.3] },
+    clapper: { build: () => clapper({}), rot: [0.3, -0.45, 0.1] },
+    sun: { build: () => sun({}), rot: [0.15, -0.3, 0.0] },
+  };
+
+  async function main() {
+    await document.fonts.load('400 100px "Changa One"');
+    await document.fonts.ready;
+    const def = ICONS[NAME];
+    if (!def) { window.__out = 'error: unknown icon ' + NAME; return; }
+    const obj = def.build();
+    obj.rotation.set(...def.rot);
+    // Fit the object: scale so its bounding sphere fills the frame.
+    const box = new THREE.Box3().setFromObject(obj);
+    const sphere = box.getBoundingSphere(new THREE.Sphere());
+    const visible = camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    const s = (visible * 0.82) / sphere.radius;
+    obj.scale.setScalar(s);
+    obj.position.copy(sphere.center).multiplyScalar(-s);
+    scene.add(obj);
+    renderer.render(scene, camera);
+    await new Promise((r) => requestAnimationFrame(r));
+    renderer.render(scene, camera);
+    window.__out = renderer.domElement.toDataURL('image/webp', 0.9);
+    window.__png = renderer.domElement.toDataURL('image/png');
+  }
+  main().catch((e) => { window.__out = 'error: ' + e.message; });
+</script>

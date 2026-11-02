@@ -1,0 +1,116 @@
+{
+  "nav": {
+    "home": "Overview",
+    "claim": "The claim",
+    "app": "The app",
+    "how": "How it works",
+    "desks": "Desks",
+    "faq": "FAQ",
+    "questions": "Questions",
+    "join": "Join",
+    "sections": "Sections"
+  },
+  "hero": {
+    "title": "Everyone has a guess. Only a market has a number.",
+    "lineA1": "Everyone has",
+    "lineA2": "a guess.",
+    "lineB1": "Only a market",
+    "lineB2": "has a number.",
+    "lead": "Buy YES or NO on a real event. The chain holds the collateral and settles the outcome.",
+    "primary": "Join waitlist",
+    "secondary": "How it works",
+    "cue": "Scroll"
+  },
+  "claim": {
+    "manifesto": "A price is an opinion someone had to pay for.",
+    "sub": "That is the whole argument for a prediction market, and the only one this page makes.",
+    "truths": {
+      "cost": {
+        "title": "It costs something to be wrong",
+        "desc": "A forecast with a price attached is one its author had to fund."
+      },
+      "moves": {
+        "title": "It moves when the world does",
+        "desc": "New information reprices the market as soon as someone trades on it."
+      },
+      "fact": {
+        "title": "It ends in a fact",
+        "desc": "The event happens or it does not, and the winning side redeems one-for-one."
+      }
+    }
+  },
+  "instrument": {
+    "figure": "Two orbs sized by the market price",
+    "eg": "For example",
+    "question": "Will the central bank cut rates at its next meeting?",
+    "unitA": "per YES share,",
+    "unitB": "paying $1 if it happens",
+    "yes": "Yes",
+    "no": "No",
+    "drag": "Drag to reprice the market",
+    "tail": "and unlike a poll or a pundit, everyone quoting it has money on the answer.",
+    "fine": "Illustrative figures. No market is live yet."
+  },
+  "app": {
+    "title": "This is what opens.",
+    "sub": "News first, then the events you can take a side on.",
+    "host": "app.solsmarket.xyz"
+  },
+  "mechanism": {
+    "title": "A minute, end to end.",
+    "sub": "Sign, take a side, come back when it resolves."
+  },
+  "desks": {
+    "title": "Six desks at launch.",
+    "sub": "Intended coverage. None of it is live yet."
+  },
+  "faq": {
+    "title": "The short answers.",
+    "subBefore": "The long ones are in the",
+    "subLink": "protocol docs",
+    "subAfter": "."
+  },
+  "join": {
+    "titleA": "We will send",
+    "titleB": "one email.",
+    "sub": "At the point there is something to open. Nothing before that.",
+    "cardTitle": "Updates",
+    "cardBody": "Stay informed while we build.",
+    "noteBefore": "This form is a UI demo. There is no waitlist backend yet, so no email is submitted or stored. Protocol design and status are in the",
+    "noteLink": "docs",
+    "noteAfter": "."
+  },
+  "form": {
+    "email": "Email address",
+    "placeholder": "you@example.com",
+    "invalid": "Enter an email address, like name@example.com.",
+    "submitting": "Joining…",
+    "success": "You’re on the list.",
+    "successBody": "We’ll email {email} when trading opens.",
+    "telegram": {
+      "title": "Join the Telegram group",
+      "body": "Launch news first, and a place to talk with the team.",
+      "cta": "Open"
+    },
+    "affiliate": {
+      "title": "Affiliate Program",
+      "body": "Bring traders to Sols Market and get rewarded for it. Ask in the group for the details.",
+      "cta": "Ask"
+    }
+  },
+  "access": {
+    "trigger": "Request access",
+    "triggerShort": "Access",
+    "title": "Request access",
+    "body": "Leave an email. We write once, when there is something to open.",
+    "submit": "Request access",
+    "note": "UI demo: no email is submitted or stored yet.",
+    "close": "Close"
+  },
+  "footer": {
+    "app": "Open app ↗",
+    "docs": "Docs ↗",
+    "contact": "Contact"
+  },
+  "toggle": "Page version"
+}

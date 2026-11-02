@@ -1,0 +1,53 @@
+/*
+ * Revision 7's one hand-written sheet.
+ *
+ * Lenis drives the scroll, and these are the rules it documents for the
+ * document it drives. The reveal rule hides every element the scroll scripts
+ * will bring in, but only once the boot script has said scripts are running,
+ * so a reader without JavaScript gets the whole page.
+ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+html.js [data-reveal] {
+  visibility: hidden;
+}
+
+/* The hero title waits for the liquid to pour it; without scripts, or with
+   reduced motion, it is simply there. */
+html.js [data-liquid] > h1 {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-liquid] > h1 {
+    opacity: 1;
+  }
+}
+
+/* Button labels: each letter lifts a line on hover, one after the other. */
+@media (hover: hover) and (pointer: fine) {
+  [data-stagger]:hover [data-ch] {
+    transform: translateY(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] {
+    visibility: visible;
+  }
+}

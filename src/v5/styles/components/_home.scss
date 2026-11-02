@@ -1,0 +1,2200 @@
+// ===========================================================================
+// Home page sections, in page order: opening, hero, news,
+// claims, steps, categories, closing waitlist, FAQ. Surfaces are the app's Card.
+// ===========================================================================
+
+// ---- Opening (components/landing/OpeningStage.tsx) -------------------------
+// A stage pinned under the transparent header. It opens on the sun, drawn in
+// WebGL (components/landing/openingSun.ts). Scrolling shrinks the sun and sets
+// it through the mark's purple into its blue, while the headline rises in
+// under it. The CSS disc takes over at the same size and colour and splits
+// into the mark's two orbs over the waiting headline. The mark then flies into
+// the header and becomes its logo, while the hero rises into place on the
+// page's plain black. When the hero lands, the stage unpins and the page
+// scrolls on.
+//
+// The base styles are the settled frame: the hero in place, the logo in the
+// header. Each animation runs from its first frame to that base, on the
+// page's scroll timeline. The intro needs JavaScript (`.js`, set before first
+// paint), scroll timelines and no reduced-motion preference; without them the
+// page shows the settled frame. Without WebGL2 it starts on the blue disc.
+
+// From the element's untransformed spot to its settled transform.
+@keyframes opening-from-rest {
+  from {
+    transform: none;
+  }
+}
+
+@keyframes opening-from-shown {
+  from {
+    opacity: 1;
+  }
+}
+
+@keyframes opening-from-hidden {
+  from {
+    opacity: 0;
+  }
+}
+
+// Changes nothing visible: openingSun.ts reads this animation's progress to
+// shade the sun, so the scroll timing lives only in this file.
+@keyframes opening-sun-progress {
+  to {
+    --opening-sun-p: 1;
+  }
+}
+
+// The hero, laid over the stage's last screen, starts `--opening-pin` below
+// the top: lifted by that much, it holds still while the stage is pinned.
+@keyframes opening-hero-hold {
+  from {
+    transform: translateY(calc(-1 * var(--opening-pin)));
+  }
+}
+
+@keyframes opening-hero-rise {
+  from {
+    transform: translateY(var(--opening-drop));
+  }
+}
+
+// Translate only: scaling text re-renders it every frame, and it shimmers.
+@keyframes opening-title-rise {
+  from {
+    transform: translateY(45svh);
+  }
+}
+
+@keyframes opening-hero-line {
+  from {
+    opacity: 0;
+    transform: translateY(4svh);
+  }
+}
+
+// Hidden at the end, so the faded cue takes no clicks.
+@keyframes opening-cue-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+    visibility: hidden;
+  }
+}
+
+// The cue comes up into view once the sun is drawn. `translate`, not
+// `transform`, so the press's `scale` still applies.
+@keyframes opening-cue-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+// A jiggle, then a rest until the next cycle. Each letter hops and wobbles a
+// moment after the one before it, so a wave runs through the words.
+@keyframes opening-cue-jiggle {
+  0%,
+  30%,
+  100% {
+    transform: none;
+  }
+
+  8% {
+    transform: translateY(-38%) rotate(-8deg);
+  }
+
+  16% {
+    transform: translateY(6%) rotate(5deg);
+  }
+
+  23% {
+    transform: translateY(-8%) rotate(-2deg);
+  }
+}
+
+// The arrow, at the wave's end, drops and settles: the way to go.
+@keyframes opening-cue-nudge {
+  0%,
+  30%,
+  100% {
+    transform: none;
+  }
+
+  10% {
+    transform: translateY(45%);
+  }
+
+  20% {
+    transform: translateY(-10%);
+  }
+}
+
+// A soft radial wash of `$color`, `$alpha` at the centre. The alpha eases out
+// toward the edge rather than falling linearly, which would leave a visible rim.
+@function soft-glow($color, $alpha, $shape: closest-side) {
+  @return radial-gradient(
+    #{$shape} in oklab,
+    color-mix(in oklab, #{$color} #{$alpha}, transparent),
+    color-mix(in oklab, #{$color} #{$alpha * 0.54}, transparent) 38%,
+    color-mix(in oklab, #{$color} #{$alpha * 0.18}, transparent) 68%,
+    transparent
+  );
+}
+
+// Geometry and scroll timing, on the root so the header and the hero can
+// follow them too.
+:root:has(.opening__track) {
+  // The disc's diameter, and its centre's height on the stage: a little above
+  // the middle, which leaves room for the headline under it.
+  --opening-disc: min(36vw, 24svh, 216px);
+  --opening-cy: 46svh;
+  // While the disc splits, the headline waits just under it: this far below
+  // its settled place, the top of the centred hero's headline. OpeningStage
+  // measures that place (`--opening-title-top`); the fallback is close to it.
+  --opening-drop: calc(
+    var(--opening-cy) + var(--opening-disc) / 2 + clamp(24px, 4svh, 48px) -
+      var(--opening-title-top, 30svh)
+  );
+  // Scroll the sun takes to become the disc. The intro sets it (below).
+  --opening-sun: 0svh;
+  --opening-split-end: calc(var(--opening-sun) + 32svh);
+  // The mark flies from the split's end and lands in the header here.
+  --opening-landed: calc(var(--opening-split-end) + 44svh);
+  // The headline rises from rest at the split's end. Eased in (quadratic), it
+  // covers its drop in twice the drop's scroll and ends at scroll speed, so
+  // the hero joins the page without a jolt as the stage unpins.
+  --opening-pin: calc(var(--opening-split-end) + 2 * var(--opening-drop));
+}
+
+.opening {
+  position: relative;
+  isolation: isolate;
+  // Start under the transparent header, so the stage fills the first screen.
+  margin-top: calc(-1 * var(--nav-h));
+}
+
+.opening__track {
+  // The sun's size against the disc at the start.
+  --opening-sun-size: 1.6;
+  // The orbs' centres sit 18 of 38 units apart: each moves 9/38 of its width.
+  --opening-offset: 23.684%;
+
+  height: 100svh;
+}
+
+.opening__stage {
+  position: sticky;
+  top: 0;
+  z-index: -1;
+  height: 100svh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+// No backdrop of its own: the stage is the page's plain black.
+.opening__art {
+  position: absolute;
+  inset: 0;
+}
+
+// The disc and the flying mark share one box, centred `--opening-cy` down the
+// stage. Settled, both sit on the header's logo (OpeningStage measures where)
+// and are gone.
+.opening__halo,
+.opening__mark {
+  position: absolute;
+  inset: 0 0 calc(100% - 2 * var(--opening-cy));
+  width: var(--opening-disc);
+  height: var(--opening-disc);
+  margin: auto;
+  opacity: 0;
+  transform: translate(var(--opening-fly-x, 0px), var(--opening-fly-y, -42svh))
+    scale(var(--opening-fly-s, 0.07));
+}
+
+// The orbs fade in as one group over the sun's disc: faded one by one, the
+// back orb's stripes would show through the half-clear front orb.
+.opening__orbs {
+  position: absolute;
+  inset: 0;
+}
+
+.opening__orb {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.opening__orb--back {
+  transform: translateX(calc(-1 * var(--opening-offset)));
+}
+
+.opening__orb--front {
+  transform: translateX(var(--opening-offset));
+}
+
+// One glow per orb, moving with it: a single violet glow round the disc parts
+// into a purple one and a blue one. It sits below the sun, so it never tints
+// the sun's disc.
+.opening__glow {
+  position: absolute;
+  inset: -50%;
+}
+
+.opening__glow--back {
+  background: soft-glow(var(--brand-back), 26%);
+  transform: translateX(calc(-0.8 * var(--opening-offset)));
+}
+
+.opening__glow--front {
+  background: soft-glow(var(--brand-front), 26%);
+  transform: translateX(calc(0.8 * var(--opening-offset)));
+}
+
+// Sun mode only (below). Settled, it is gone and the disc's size.
+.opening__sun {
+  position: absolute;
+  inset: 0 0 calc(100% - 2 * var(--opening-cy));
+  display: none;
+  width: calc(var(--opening-disc) * var(--opening-sun-size));
+  height: calc(var(--opening-disc) * var(--opening-sun-size));
+  margin: auto;
+  opacity: 0;
+  transform: scale(calc(1 / var(--opening-sun-size)));
+}
+
+// Three times the disc's width: the sun's light fades out two radii past its
+// limb, inside the canvas. Sunrise: the sun and its light come into focus once
+// the first frame is drawn.
+.opening__sun-canvas {
+  position: absolute;
+  inset: -100%;
+  display: block;
+  width: 300%;
+  height: 300%;
+  opacity: 0;
+  filter: blur(10px);
+  transition:
+    opacity 1.4s var(--ease-out),
+    filter 1.4s var(--ease-out);
+
+  [data-sun='ready'] & {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+// "See more" on a frosted pill, only shown with the pinned intro (see the
+// @supports block below). A click plays the rest of the intro (OpeningStage).
+// Fixed above the hero, whose box covers the first screen while it waits:
+// under it, the pill would never get the click.
+.opening__cue {
+  position: fixed;
+  inset-inline: 0;
+  bottom: max(32px, calc(env(safe-area-inset-bottom) + 16px));
+  z-index: 1;
+  display: none;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.opening__cue-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px 11px 20px;
+  border-radius: 999px;
+  background: var(--fill-2);
+  box-shadow:
+    inset 0 0 0 1px oklch(1 0 0 / 0.12),
+    inset 0 1px 0 oklch(1 0 0 / 0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-1);
+  pointer-events: auto;
+  transition:
+    background-color 160ms ease,
+    box-shadow 160ms ease,
+    scale 120ms var(--ease-out);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: oklch(1 0 0 / 0.12);
+      box-shadow:
+        inset 0 0 0 1px oklch(1 0 0 / 0.2),
+        inset 0 1px 0 oklch(1 0 0 / 0.08);
+    }
+  }
+
+  &:active {
+    scale: 0.97;
+  }
+}
+
+// Each hops from its foot, as if standing on the line.
+.opening__cue-letter,
+.opening__cue-arrow {
+  display: inline-block;
+  transform-origin: 50% 100%;
+}
+
+.opening__cue-arrow {
+  display: flex;
+  color: var(--text-2);
+}
+
+@supports (animation-timeline: scroll()) and (animation-range: 0px 1px) {
+  @media (prefers-reduced-motion: no-preference) {
+    // The `animation` shorthand resets the timeline, so the timeline and the
+    // range come after it.
+    :root.js {
+      .opening__track {
+        height: calc(var(--opening-pin) + 100svh);
+      }
+
+      // The glows fade as the mark flies.
+      .opening__halo {
+        animation:
+          opening-from-rest var(--ease-in-out) both,
+          opening-from-shown linear both;
+        animation-timeline: scroll(root);
+        animation-range:
+          var(--opening-split-end) var(--opening-landed),
+          var(--opening-split-end) var(--opening-landed);
+      }
+
+      // Flies into the header, then gives way to the logo there.
+      .opening__mark {
+        animation:
+          opening-from-rest var(--ease-in-out) both,
+          opening-from-shown linear both;
+        animation-timeline: scroll(root);
+        animation-range:
+          var(--opening-split-end) var(--opening-landed),
+          var(--opening-landed) calc(var(--opening-landed) + 1svh);
+      }
+
+      .opening__glow,
+      .opening__orb {
+        animation: opening-from-rest var(--ease-in-out) both;
+        animation-timeline: scroll(root);
+        animation-range: var(--opening-sun) var(--opening-split-end);
+      }
+
+      .opening__cue {
+        display: flex;
+        animation: opening-cue-out var(--ease-out) both;
+        animation-timeline: scroll(root);
+        animation-range: 0px 12svh;
+      }
+
+      // The pill waits for the sun's first frame (or for word that it is
+      // off), comes in, then jiggles every few seconds until the page scrolls
+      // it away.
+      .opening__track[data-sun='loading'] ~ .opening__cue .opening__cue-pill {
+        visibility: hidden;
+      }
+
+      .opening__track:not([data-sun='loading']) ~ .opening__cue {
+        .opening__cue-pill {
+          animation: opening-cue-in 0.7s var(--ease-out) 0.6s both;
+        }
+
+        .opening__cue-letter {
+          animation: opening-cue-jiggle 2.8s var(--ease-in-out) infinite;
+          animation-delay: calc(1.5s + var(--i) * 45ms);
+        }
+
+        .opening__cue-arrow {
+          animation: opening-cue-nudge 2.8s var(--ease-in-out) infinite;
+          animation-delay: calc(1.5s + var(--i) * 45ms);
+        }
+      }
+
+      // The hero rides the pinned stage: the section cancels the scroll, so
+      // it holds still, and its body sits the drop lower and eases back up
+      // from the split's end. One transform per element: Chrome runs a lone
+      // transform on the compositor, in step with the scroll, but not two
+      // stacked on one element, and text moved off it shakes as you scroll.
+      .opening .hero {
+        animation: opening-hero-hold linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0px var(--opening-pin);
+      }
+
+      .opening .hero__body {
+        animation: opening-hero-rise cubic-bezier(0.333, 0, 0.667, 0.333) both;
+        // The CSS compiler expands this shorthand with a 0s duration, which
+        // would end a scroll-driven animation at once; auto spans the range.
+        animation-duration: auto;
+        animation-timeline: scroll(root);
+        animation-range: var(--opening-split-end) var(--opening-pin);
+      }
+
+      // The headline waits under the mark from the start (sun mode brings it
+      // in, below). The waitlist comes in under it once the mark is on its
+      // way, from a little lower, so it closes up as they rise. The load-time
+      // fade would play out of sight, so it is dropped.
+      .opening .hero__body > * {
+        animation: none;
+      }
+
+      .opening .hero__body > .waitlist {
+        animation: opening-hero-line var(--ease-in-out) both;
+        animation-timeline: scroll(root);
+        animation-range: calc(var(--opening-split-end) + var(--opening-drop) / 2) var(--opening-pin);
+      }
+
+      // The full stop sets into the headline as the mark lifts off for the
+      // header, before the waitlist comes in.
+      .opening .hero__dot {
+        animation: hero-dot-set var(--ease-out) both;
+        animation-timeline: scroll(root);
+        animation-range: var(--opening-split-end) calc(var(--opening-split-end) + 16svh);
+      }
+    }
+
+    // The header stays clear while the mark flies in, and its own logo shows
+    // just before the flying mark fades out under it.
+    :root.js:has(.opening__track) {
+      // The header's veil (components/_site.scss).
+      .nav::before {
+        animation: opening-from-hidden linear both;
+        animation-timeline: scroll(root);
+        animation-range: var(--opening-landed) calc(var(--opening-landed) + 8svh);
+      }
+
+      [data-opening-target] {
+        animation: opening-from-hidden linear both;
+        animation-timeline: scroll(root);
+        animation-range: calc(var(--opening-landed) - 1svh) var(--opening-landed);
+      }
+    }
+
+    // Sun mode: needs WebGL2 too (OpeningStage sets data-sun="off" without
+    // it). The sun shrinks to the disc by 90% of its scroll; the CSS disc fades
+    // in over it from there, and only then does the sun fade out.
+    :root.js:has(.opening__track:not([data-sun='off'])) {
+      --opening-sun: 60svh;
+    }
+
+    :root.js .opening__track:not([data-sun='off']) {
+      .opening__sun {
+        display: block;
+        animation:
+          opening-sun-progress linear both,
+          opening-from-rest var(--ease-in-out) both,
+          opening-from-shown linear both;
+        animation-timeline: scroll(root);
+        animation-range:
+          0px var(--opening-sun),
+          calc(var(--opening-sun) * 0.25) calc(var(--opening-sun) * 0.9),
+          var(--opening-sun) calc(var(--opening-sun) + 2svh);
+      }
+
+      // The sun's light, setting into the mark's colours (openingSun.ts), gives
+      // way to the mark's violet glow.
+      .opening__glow {
+        animation:
+          opening-from-rest var(--ease-in-out) both,
+          opening-from-hidden var(--ease-in-out) both;
+        animation-timeline: scroll(root);
+        animation-range:
+          var(--opening-sun) var(--opening-split-end),
+          calc(var(--opening-sun) * 0.45) var(--opening-sun);
+      }
+
+      .opening__orbs {
+        animation: opening-from-hidden linear both;
+        animation-timeline: scroll(root);
+        animation-range: calc(var(--opening-sun) * 0.9) var(--opening-sun);
+      }
+
+      // The headline rises in under the setting sun and comes to rest under
+      // the disc just as the sun becomes it.
+      ~ .hero .hero__title {
+        animation:
+          opening-title-rise cubic-bezier(0.333, 0.667, 0.667, 1) both,
+          opening-from-hidden linear both;
+        animation-duration: auto; // See `.opening .hero__body`.
+        animation-timeline: scroll(root);
+        animation-range:
+          calc(var(--opening-sun) * 0.2) var(--opening-sun),
+          calc(var(--opening-sun) * 0.35) calc(var(--opening-sun) * 0.8);
+      }
+    }
+  }
+}
+
+// ---- Hero ------------------------------------------------------------------
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+// The full stop drops into the line from above, coming into view.
+@keyframes hero-dot-set {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5em);
+  }
+}
+
+// Laid over the opening's last screen (the negative margin), so the stage sits
+// behind it. It fills the first screen with the headline and the waitlist
+// centred under the nav, which overlaps the opening; the larger bottom padding
+// lifts them a little above the middle, where a centred block looks centred.
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 1040px;
+  min-height: 100svh;
+  margin: -100svh auto 0;
+  padding: var(--nav-h) var(--gutter) clamp(56px, 10svh, 112px);
+  text-align: center;
+}
+
+.hero__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > * {
+    animation: hero-in 0.7s var(--ease-out) both;
+  }
+
+  > :nth-child(2) {
+    animation-delay: 0.07s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    > * {
+      animation: none;
+    }
+  }
+}
+
+// The fold's one statement, on two balanced lines.
+.hero__title {
+  font-size: clamp(3rem, 1rem + 7vw, 7.5rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+  color: var(--text-1);
+  text-wrap: balance;
+
+  &:lang(th) {
+    line-height: var(--display-lh);
+    letter-spacing: 0;
+  }
+}
+
+// Keeps the full stop on the last word's line (HeroShowcase).
+.hero__stop {
+  white-space: nowrap;
+}
+
+// The full stop, in the headline's colour. It lands once the headline is in;
+// the opening moves it onto its scroll (above).
+.hero__dot {
+  display: inline-block;
+  animation: hero-dot-set 0.6s var(--ease-out) 0.35s both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// ---- Claims: portrait posters (components/landing/ClaimPoster.tsx) --------
+// A plain tall card: a full-bleed blurred picture, one big centred word, and a
+// title, byline and pill button over a bottom fade. Nothing else on it.
+
+.posters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 1080px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.poster-item__desc {
+  margin-top: 14px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.poster {
+  --poster-r: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--poster-r);
+  background: oklch(0.2 0.02 260);
+  box-shadow:
+    0 0 0 1px var(--ring),
+    0 30px 60px -28px oklch(0 0 0 / 0.8);
+  color: #ffffff;
+  transition:
+    transform 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out);
+
+  // Only the grid's posters lift: the stack's fill the screen and slide under a
+  // still pointer, so a hover state there would flicker as they pass.
+  @media (hover: hover) and (pointer: fine) {
+    .posters &:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 0 0 1px oklch(1 0 0 / 0.16),
+        0 40px 70px -28px oklch(0 0 0 / 0.85);
+    }
+
+    .posters &:hover .poster__art {
+      transform: scale(1.06);
+    }
+  }
+
+  // Two columns on a tablet: square, or each poster is taller than the screen.
+  @media (min-width: 561px) and (max-width: 1080px) {
+    aspect-ratio: 1 / 1;
+  }
+
+  @media (max-width: 560px) {
+    aspect-ratio: 4 / 5;
+  }
+
+  // The bottom fade the title and button sit on.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(
+        to top,
+        oklch(0.08 0.01 260 / 0.92) 0%,
+        oklch(0.08 0.01 260 / 0.55) 24%,
+        transparent 50%
+      ),
+      linear-gradient(to bottom, oklch(0.08 0.01 260 / 0.25), transparent 22%);
+    pointer-events: none;
+  }
+}
+
+.poster__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.poster__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Generated placeholder: three blurred light masses plus streaks, drifting.
+@keyframes poster-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) scale(1.05) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) scale(1.12) rotate(3deg);
+  }
+}
+
+@keyframes poster-streak {
+  0% {
+    transform: translateX(-6%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(6%) skewX(-18deg);
+  }
+}
+
+.poster__art {
+  position: absolute;
+  inset: -18%;
+  display: block;
+  background: var(--art-base);
+  filter: blur(26px) saturate(1.25);
+  transition: transform 1.2s var(--ease-out);
+  animation: poster-drift 11s ease-in-out infinite alternate;
+
+  i {
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  // Warm mass, upper right.
+  i:nth-child(1) {
+    top: 12%;
+    right: 8%;
+    width: 58%;
+    height: 46%;
+    background: var(--art-a);
+  }
+
+  // Deep shadow mass, lower left.
+  i:nth-child(2) {
+    bottom: 6%;
+    left: 4%;
+    width: 64%;
+    height: 50%;
+    background: var(--art-b);
+  }
+
+  // Horizontal light streaks: the motion blur.
+  i:nth-child(3) {
+    inset: 22% -10%;
+    border-radius: 0;
+    background: repeating-linear-gradient(
+      172deg,
+      transparent 0 26px,
+      oklch(1 0 0 / 0.16) 26px 34px,
+      transparent 34px 58px
+    );
+    animation: poster-streak 7s ease-in-out infinite alternate;
+  }
+}
+
+.poster__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+// Solana's brand colours (solana.com/branding): purple #9945FF, green #14F195.
+.poster[data-art='onchain'] {
+  --art-base: linear-gradient(150deg, #9945ff, #3b1d73 70%);
+  --art-a: #14f195;
+  --art-b: oklch(0.14 0.04 290);
+}
+
+.poster[data-art='instant'] {
+  --art-base: linear-gradient(160deg, oklch(0.6 0.13 165), oklch(0.2 0.04 200) 70%);
+  --art-a: oklch(0.88 0.12 120);
+  --art-b: oklch(0.15 0.03 220);
+}
+
+.poster[data-art='noncustodial'] {
+  --art-base: linear-gradient(160deg, oklch(0.5 0.17 290), oklch(0.2 0.06 270) 70%);
+  --art-a: oklch(0.78 0.13 340);
+  --art-b: oklch(0.14 0.04 265);
+}
+
+.poster[data-art='oracle'] {
+  --art-base: linear-gradient(160deg, oklch(0.62 0.15 40), oklch(0.22 0.05 20) 70%);
+  --art-a: oklch(0.88 0.1 85);
+  --art-b: oklch(0.15 0.03 300);
+}
+
+.poster__mark {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  font-size: clamp(2.75rem, 1.8rem + 2.6vw, 4rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  text-align: center;
+  text-shadow: 0 6px 30px oklch(0 0 0 / 0.35);
+  pointer-events: none;
+}
+
+.poster {
+  container-type: inline-size;
+}
+
+// The explanation: label, title, one sentence and a button, with the facts
+// beside them when there is room (stack cards) or under them when not.
+.poster__foot {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: 20px;
+  padding: 18px;
+}
+
+.poster__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.poster__label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: oklch(1 0 0 / 0.66);
+}
+
+.poster__title {
+  font-size: 1.0625rem;
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-wrap: balance;
+}
+
+.poster__desc {
+  max-width: 38ch;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: oklch(1 0 0 / 0.76);
+  text-wrap: pretty;
+}
+
+// Facts: label over value, split by hairlines, like a spec sheet.
+.poster__facts {
+  display: grid;
+  min-width: 0;
+}
+
+.poster__fact {
+  display: grid;
+  gap: 3px;
+  padding: 12px 0;
+  border-top: 1px solid oklch(1 0 0 / 0.16);
+
+  dt {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(1 0 0 / 0.56);
+  }
+
+  dd {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: #ffffff;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.poster__cta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 6px 18px -6px oklch(0.5402 0.2002 259.85 / 0.8);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  transition:
+    background-color 200ms var(--ease-std),
+    transform 80ms var(--ease-press);
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+// Thai has no capitals and tall marks: no tight tracking, more line height.
+:lang(th) {
+  .poster__mark {
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .poster__title {
+    letter-spacing: 0;
+    line-height: 1.3;
+  }
+
+  .poster__label,
+  .poster__fact dt {
+    letter-spacing: 0.02em;
+  }
+
+  .poster__desc {
+    line-height: 1.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster__art,
+  .poster__art i {
+    animation: none;
+  }
+}
+
+// ---- Claims stack (components/landing/ClaimStack.tsx) ---------------------
+// The posters hold the screen while the page scrolls; each new one slides up
+// through the frame's lower edge and covers the last.
+
+.cstack {
+  position: relative;
+  // Full bleed: out of the section's container to the viewport's edges.
+  // --page-w is the body's width, less the root's scrollbar gutter (ClaimStack).
+  width: var(--page-w, 100vw);
+  margin-left: calc(50% - var(--page-w, 100vw) / 2);
+  // A covered card tilts past the screen edge; clip it here (clip makes no
+  // scroll container, so the sticky pin inside still holds).
+  overflow-x: clip;
+  // One screen to pin, 80svh of scroll per card after the first, and a hold
+  // at each end (ClaimStack HOLD = 0.3 cards).
+  height: calc(100svh + (var(--n) - 0.4) * 80svh);
+}
+
+.cstack__pin {
+  position: sticky;
+  top: 64px; // under the sticky nav
+  height: calc(100svh - 64px);
+}
+
+// The frame opens with --e (0 → 1, ClaimStack's `expand`): from the content
+// column (the container's edges, a little short of the pin's height) out to
+// a thin margin round the whole screen.
+.cstack__frame {
+  --pad: clamp(8px, 1.2vw, 16px);
+  --col: max(var(--gutter), (100% - var(--container)) / 2);
+  --e: 1; // fully open until the script sets it
+  position: absolute;
+  inset: calc(var(--pad) + (1 - var(--e)) * 5svh)
+    calc(var(--pad) + (1 - var(--e)) * (var(--col) - var(--pad)));
+  // Clip only the lower edge: a new card rises through it, while a covered
+  // card's tilted corners stay visible on the other sides.
+  clip-path: inset(-30% -20% 0 -20%);
+}
+
+.cstack .poster {
+  // Rounder while it sits in the column; tighter once it fills the screen.
+  --poster-r: calc(clamp(18px, 2vw, 32px) + (1 - var(--e, 1)) * 8px);
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  transform-origin: 50% 85%;
+  // The transforms follow the scroll exactly; no easing on top of them.
+  transition: box-shadow 0.5s var(--ease-out);
+  will-change: transform;
+}
+
+.cstack .poster__media {
+  transform-origin: 50% 60%;
+}
+
+.cstack .poster__mark {
+  // In the flow, above the explanation: the word is the picture, sized to the
+  // screen, and the text below never runs under it.
+  position: relative;
+  inset: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: clamp(48px, 7vh, 72px); // clear of the counter
+  font-size: clamp(4.5rem, 1.5rem + 12vw, 15rem);
+  letter-spacing: -0.07em;
+}
+
+.cstack .poster__foot {
+  padding: clamp(20px, 4vw, 56px);
+  padding-top: 0;
+}
+
+// Wide cards: explanation left, facts right, both on one baseline.
+@container (min-width: 760px) {
+  .cstack .poster__foot {
+    grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+    gap: clamp(32px, 5vw, 96px);
+  }
+}
+
+.cstack .poster__text {
+  gap: 14px;
+}
+
+.cstack .poster__label {
+  font-size: 0.75rem;
+}
+
+.cstack .poster__title {
+  font-size: clamp(1.75rem, 1rem + 2.4vw, 3.25rem);
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+
+.cstack .poster__desc {
+  font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.125rem);
+}
+
+.cstack .poster__cta {
+  min-height: 44px;
+  margin-top: 6px;
+  padding: 0 20px;
+  font-size: 0.875rem;
+}
+
+.cstack .poster__fact {
+  padding: clamp(10px, 1.4vh, 16px) 0;
+
+  dd {
+    font-size: clamp(0.9375rem, 0.85rem + 0.3vw, 1.0625rem);
+  }
+}
+
+:lang(th) .cstack .poster__title {
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+:lang(th) .cstack .poster__mark {
+  letter-spacing: -0.01em;
+}
+
+// The fade the explanation sits on: deep at the bottom, gone by the middle.
+.cstack .poster::after {
+  background:
+    linear-gradient(
+      to top,
+      oklch(0.08 0.01 260 / 0.94) 0%,
+      oklch(0.08 0.01 260 / 0.7) 26%,
+      oklch(0.08 0.01 260 / 0.2) 48%,
+      transparent 62%
+    ),
+    linear-gradient(to bottom, oklch(0.08 0.01 260 / 0.3), transparent 20%);
+}
+
+// The explanation rises once the card is mostly in, never half-scrolled; the
+// facts follow a beat later.
+.cstack .poster__text,
+.cstack .poster__facts {
+  transition:
+    opacity 0.5s var(--ease-out),
+    transform 0.6s var(--ease-out);
+}
+
+.cstack .poster__facts {
+  transition-delay: 120ms;
+}
+
+.cstack .poster[data-settled='false'] {
+  .poster__text,
+  .poster__facts {
+    opacity: 0;
+    transform: translateY(18px);
+    transition-delay: 0s;
+  }
+}
+
+.poster__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: oklch(0.08 0.01 260);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cstack__counter {
+  position: absolute;
+  top: clamp(14px, 2vw, 24px);
+  left: 50%;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px 6px 12px;
+  border-radius: 999px;
+  background: oklch(0 0 0 / 0.4);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.12);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #ffffff;
+  transform: translateX(-50%);
+}
+
+.cstack__num {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+// The number rolls in the direction of the scroll.
+.cstack__roll {
+  position: relative;
+  display: inline-flex;
+  width: 2ch;
+  height: 1.2em;
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.cstack__of {
+  color: oklch(1 0 0 / 0.55);
+}
+
+.cstack__dashes {
+  display: flex;
+}
+
+.cstack__dash {
+  width: 18px;
+  height: 20px;
+  border-radius: 2px;
+  background: linear-gradient(oklch(1 0 0 / 0.3), oklch(1 0 0 / 0.3)) center / 12px 2px no-repeat;
+  transition: background-size 0.4s var(--ease-out);
+
+  &[data-on='true'] {
+    background-image: linear-gradient(#ffffff, #ffffff);
+  }
+
+  &[aria-current='true'] {
+    background-size: 16px 2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+}
+
+// ---- How it works (WordRoller.tsx) ------------------------------------------
+// A headline whose subject rolls through a list as the page scrolls (a
+// word-roller pattern), its lead and the call to action held with it.
+
+// A section holding the roller (How it works) pins a full-screen stage at the
+// very top of the screen, so a link lands where the pin starts: the section's
+// padding and the header's scroll-padding (64px + 12px, base/_reset.scss) both
+// cancelled.
+.sec:has(> .roller) {
+  scroll-margin-top: calc(-1 * (64px + 12px) - var(--section));
+}
+
+// The roller. `--lh` is one line of the list; `--above` and `--below` are
+// how many lines show on each side of the lit one; `--at` (set from the scroll
+// in WordRoller.tsx) is the list's position, in words.
+.roller {
+  --lh: 1.14em;
+  --above: 2;
+  --below: 2;
+  --rest: calc(var(--n) - 1);
+}
+
+// Live, the stage holds the screen while the list turns.
+.roller[data-live] {
+  height: calc(100svh + var(--n) * 18svh);
+
+  .roller__stage {
+    position: sticky;
+    top: 0;
+    justify-content: center;
+    height: 100svh;
+    padding-block: 64px 0;
+  }
+}
+
+.roller__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.roller__sentence {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28em;
+  margin-top: 8px;
+  font-size: clamp(2.25rem, 0.9rem + 3.9vw, 4.5rem);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--text-1);
+}
+
+.roller__window {
+  display: block;
+  height: calc((var(--above) + 1 + var(--below)) * var(--lh));
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent, #000 36%, #000 64%, transparent);
+}
+
+// The middle copy of the list is the real one: word i sits at k = n + i, so
+// the lit line is at k = n + at.
+.roller__list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  transform: translateY(calc((var(--above) - var(--n) - var(--at, var(--rest))) * var(--lh)));
+  will-change: transform;
+}
+
+// Lit on the line, dimmer by the line away from it (|k − n − at|, as max()).
+.roller__word {
+  --d: max(
+    calc(var(--k) - var(--n) - var(--at, var(--rest))),
+    calc(var(--n) + var(--at, var(--rest)) - var(--k))
+  );
+  display: block;
+  height: var(--lh);
+  line-height: var(--lh);
+  white-space: nowrap;
+  opacity: calc(1 - min(1, var(--d)) * 0.78);
+}
+
+.roller__suffix {
+  line-height: var(--lh);
+  white-space: nowrap;
+}
+
+.roller__lead {
+  max-width: 46ch;
+  margin-top: clamp(20px, 2.4vw, 32px);
+  font-size: clamp(1rem, 0.92rem + 0.35vw, 1.1875rem);
+  line-height: 1.55;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+// Phones: one line above the lit word, the rest of the sentence under it.
+@media (max-width: 640px) {
+  .roller {
+    --above: 1;
+    --below: 0;
+  }
+
+  .roller__stage {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .roller__sentence {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    font-size: clamp(2.25rem, 1rem + 6vw, 3rem);
+  }
+
+  .roller__window {
+    mask-image: linear-gradient(to bottom, transparent, #000 75%);
+  }
+
+  .roller__list {
+    align-items: flex-start;
+  }
+}
+
+:lang(th) {
+  .roller {
+    --lh: 1.45em;
+  }
+
+  .roller__sentence {
+    letter-spacing: 0;
+  }
+
+  .roller__lead {
+    line-height: 1.7;
+  }
+}
+
+.roller__action {
+  margin-top: clamp(24px, 3vw, 36px);
+}
+
+// ---- Categories: a fan of sample markets (components/landing/CategoryFan.tsx)
+// After the card ribbon in graphicalui.com's footer: cards on an arc that open
+// on entry, part around the pointer, and loop a small chart redraw.
+
+.sec--cats {
+  // Full-bleed, so the arc's end cards can reach past the column and are
+  // clipped only at the page edge instead of widening the page.
+  max-width: none;
+  overflow-x: clip;
+}
+
+.fan {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  // Wide enough for the arc's ends; the page body already clips overflow-x.
+  overflow: visible;
+}
+
+.fcard {
+  position: absolute;
+  top: 0;
+  left: calc(50% - var(--fan-card-w) / 2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: var(--fan-card-w);
+  height: 224px; // cardShell CARD_HEIGHT
+  padding: 16px;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--mc);
+  box-shadow:
+    0 0 0 1px var(--ring),
+    0 18px 40px -12px oklch(0 0 0 / 0.65);
+  color: var(--text-1);
+  transform-origin: 50% 120%;
+  will-change: transform, opacity;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+  container-type: inline-size;
+  // Close to the lift spring's settle time, so rim and shadow arrive with it.
+  transition: box-shadow 380ms var(--ease-out);
+}
+
+// The card under the mouse: a brighter rim and a deeper shadow as it lifts.
+.fcard.is-active {
+  box-shadow:
+    0 0 0 1px oklch(1 0 0 / 0.22),
+    0 28px 60px -14px oklch(0 0 0 / 0.8);
+}
+
+// Header: thumb + title; it takes the free height so body and footer sit low.
+.fcard__head {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 0;
+}
+
+.fcard__title {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+
+.fcard--multi .fcard__title {
+  -webkit-line-clamp: 2;
+}
+
+.fcard__body {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+// ChanceLine
+.fcard__chance {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.fcard__pct {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.fcard__caption {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-2);
+}
+
+.fcard__move {
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.fcard__move--up {
+  color: oklch(0.7064 0.148 155.82); // successInk
+}
+
+.fcard__move--down {
+  color: var(--no-ink);
+}
+
+// tradeButton: wide pair and compact row buttons.
+.fcard__pair {
+  display: flex;
+  gap: 8px;
+}
+
+.fbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-xs, 4px);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.fbtn--wide {
+  flex: 1 1 0;
+  height: 36px;
+}
+
+.fbtn--compact {
+  flex-shrink: 0;
+  width: 44px;
+  height: 28px;
+  font-size: 0.75rem;
+}
+
+.fbtn--yes {
+  background: oklch(0.7064 0.148 155.82 / 0.15); // successBgStrong
+  color: oklch(0.7064 0.148 155.82); // successInk
+}
+
+.fbtn--no {
+  background: oklch(0.6407 0.1681 23.08 / 0.15); // dangerBgStrong
+  color: var(--no-ink);
+}
+
+// Multi: OutcomeButtons rows.
+.fcard__rows {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fcard__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+
+.fcard__avatar {
+  --slot: oklch(0.6022 0.2168 259.63); // accentPrimary
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--slot) 20%, transparent);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--slot) 60%, var(--text-1));
+}
+
+.fcard__avatar[data-slot='1'] {
+  --slot: oklch(0.846 0.17 85.3); // seriesGold
+}
+
+.fcard__avatar[data-slot='2'] {
+  --slot: oklch(0.685 0.187 296.4); // seriesPurple
+}
+
+.fcard__oname {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.fcard__opct {
+  flex-shrink: 0;
+  width: 44px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+// The app hides compact buttons on a narrow card (media cardNarrow); so does the fan.
+@container (max-width: 239px) {
+  .fbtn--compact {
+    display: none;
+  }
+}
+
+// Ended state: one pill with a coloured badge.
+.fcard__result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--r-md);
+  background: var(--fill);
+}
+
+.fcard__badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #ffffff;
+}
+
+.fcard__badge--pending {
+  background: oklch(0.7837 0.1587 72.99); // accentWarning
+}
+
+.fcard__badge--yes {
+  background: var(--yes);
+}
+
+.fcard__result-label {
+  overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@keyframes hourglass-flip {
+  0%,
+  40% {
+    transform: rotate(0deg);
+  }
+  60%,
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+.fcard.is-live .fcard__badge--pending svg {
+  animation: hourglass-flip 2.8s ease-in-out infinite;
+}
+
+// Footer: volume · end date.
+.fcard__foot {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  overflow: hidden;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: var(--text-3);
+}
+
+.fcard__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--no-ink);
+
+  i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--no);
+  }
+}
+
+@keyframes fcard-ping {
+  75%,
+  100% {
+    box-shadow: 0 0 0 5px oklch(0.6407 0.1681 23.08 / 0);
+  }
+  0% {
+    box-shadow: 0 0 0 0 oklch(0.6407 0.1681 23.08 / 0.7);
+  }
+}
+
+.fcard.is-live .fcard__live i {
+  animation: fcard-ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.fcard__asset {
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+// Headline cover: picture fills the card, ChanceMeter top-right, masthead low.
+.fcard--cover {
+  padding: 0;
+}
+
+.fcard__cover {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.fcard__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(220deg, oklch(0.1448 0 0 / 0.42) 0%, transparent 42%),
+    linear-gradient(
+      to top,
+      oklch(0.1448 0 0 / 0.9) 0%,
+      oklch(0.1448 0 0 / 0.55) 38%,
+      oklch(0.1448 0 0 / 0.12) 68%,
+      transparent 100%
+    ); // insightPhotoScrim
+}
+
+.fcard__meter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 56px;
+  padding: 6px 8px;
+  border-radius: var(--r-md);
+  background: oklch(0.1448 0 0 / 0.42); // mediaScrimWash
+  box-shadow: inset 0 0 0 1px oklch(0.9219 0 0 / 0.12);
+  backdrop-filter: blur(8px);
+  line-height: 1;
+
+  b {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+  }
+}
+
+.fcard__meter-bar {
+  display: flex;
+  width: 100%;
+  height: 3px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 1px;
+  background: var(--no);
+
+  i {
+    height: 100%;
+    background: var(--yes);
+    transition: width 0.8s var(--ease-out);
+  }
+}
+
+.fcard__masthead {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+}
+
+.fcard__kicker {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: oklch(1 0 0 / 0.72);
+}
+
+.fcard__cover-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+// A changed figure flashes, then settles (Num keys on its value).
+@keyframes num-flash {
+  from {
+    color: var(--yes-ink);
+    text-shadow: 0 0 12px oklch(0.7064 0.148 155.82 / 0.6);
+  }
+}
+
+.fcard.is-live .num {
+  animation: num-flash 0.9s var(--ease-out);
+}
+
+// ---- Image placeholder (fanCards.tsx CardImage) -----------------------------
+// Category-tinted art in the slot a market's picture fills in the app.
+
+.ph {
+  --tone: oklch(0.6022 0.2168 259.63);
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background:
+    radial-gradient(
+      120% 120% at 100% 0%,
+      color-mix(in oklab, var(--tone) 70%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      90% 90% at 0% 100%,
+      color-mix(in oklab, var(--tone) 35%, black),
+      transparent 70%
+    ),
+    linear-gradient(160deg, oklch(0.3 0.01 265), oklch(0.18 0.006 265));
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.08);
+  color: oklch(1 0 0 / 0.9);
+
+  // Faint diagonal hatching: reads as "picture goes here".
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(135deg, transparent 0 7px, oklch(1 0 0 / 0.05) 7px 8px);
+    pointer-events: none;
+  }
+}
+
+.ph[data-tone='crypto'] {
+  --tone: oklch(0.7523 0.1663 62.59);
+}
+.ph[data-tone='politics'] {
+  --tone: oklch(0.6022 0.2168 259.63);
+}
+.ph[data-tone='sports'] {
+  --tone: oklch(0.786 0.137 214.7);
+}
+.ph[data-tone='culture'] {
+  --tone: oklch(0.72 0.227 325.3);
+}
+.ph[data-tone='tech'] {
+  --tone: oklch(0.685 0.187 296.4);
+}
+.ph[data-tone='economy'] {
+  --tone: oklch(0.78 0.15 172);
+}
+
+.ph__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ph__icon {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 6px oklch(0 0 0 / 0.4));
+}
+
+.ph--thumb {
+  width: 40px;
+  height: 40px;
+}
+
+.ph--cover {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  align-items: flex-start;
+  padding-top: 44px;
+
+  .ph__icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fcard {
+    will-change: auto;
+  }
+}
+
+// ---- Closing: the waitlist (components/landing/CapsuleSplit.tsx) -----------
+// After a capsule-hero pattern: the giant words Yes and No part as the section
+// scrolls in (`--open`, 0 → 1, set in CapsuleSplit.tsx), opening a rounded
+// window between them; once open, the waitlist form sits at its centre.
+
+.sec--closing {
+  max-width: none;
+  overflow-x: clip;
+  text-align: center;
+}
+
+.sec--closing .sec__head {
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+// Below $capsule-stack the row is too narrow for the form between the words
+// (it needs about 340px), so they stack and the capsule opens downwards, full
+// width.
+$capsule-stack: 1023px;
+
+.capsule-row {
+  container-type: inline-size;
+  max-width: 1600px;
+  margin-inline: auto;
+  font-size: clamp(3.25rem, 17vw, 18rem);
+
+  @media (max-width: $capsule-stack) {
+    font-size: min(27vw, 10rem);
+  }
+}
+
+.capsule-row__inner {
+  --open: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.04em + var(--open) * 0.08em);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.055em;
+  color: var(--text-1);
+  user-select: none;
+
+  // The capsule's full size, declared here so the words can travel by it too.
+  --cap-w: min(2.3em, calc(100cqw - 3.3em));
+  --cap-h: 0.8em;
+
+  // Phones stack the words and open the capsule downwards. The layout holds
+  // the open size from the start (only the window and the words move), so
+  // nothing below shifts while it opens and in-page jumps land true.
+  @media (max-width: $capsule-stack) {
+    --cap-w: 100cqw;
+    --cap-h: 1.35em;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.07em;
+  }
+
+  // Focus inside (a keyboard user reaching the form) opens it outright, over
+  // the scroll-driven value set inline.
+  &:focus-within {
+    --open: 1 !important;
+  }
+}
+
+.capsule-row__word {
+  flex: none;
+  // Room for the last letter, which the tight tracking pulls in.
+  padding-inline-end: 0.04em;
+
+  @media (max-width: $capsule-stack) {
+    &:first-child {
+      align-self: flex-start;
+      transform: translateY(calc((1 - var(--open)) * var(--cap-h) / 2));
+    }
+
+    &:last-child {
+      align-self: flex-end;
+      transform: translateY(calc((var(--open) - 1) * var(--cap-h) / 2));
+    }
+  }
+}
+
+// Its full size resolves where it is declared (the row's font size and width),
+// so the capsule, the words and the form inside all read the same lengths.
+@property --cap-w {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --cap-h {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+// As wide as the words leave room for, up to 2.3em: the form needs the width
+// more than the capsule needs its proportions.
+.capsule {
+  position: relative;
+  flex: none;
+  width: calc(var(--open) * var(--cap-w));
+  height: var(--cap-h);
+  // Sits on the words' cap height rather than their line box.
+  transform: translateY(0.02em);
+
+  @media (max-width: $capsule-stack) {
+    width: var(--cap-w);
+    transform: none;
+  }
+}
+
+// The window is the capsule's surface; the form sits over it, unclipped, so a
+// long error message is never cut.
+.capsule__window {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(120% 150% at 72% 20%, oklch(0.4 0.15 262 / 0.9), transparent 60%),
+    oklch(0.2 0.03 262);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.1);
+
+  // Stacked, the window opens from the centre line out to the capsule's height.
+  @media (max-width: $capsule-stack) {
+    inset-block: calc((1 - var(--open)) * var(--cap-h) / 2);
+  }
+}
+
+// The form, kept clear of the capsule's rounded ends. Its field (not field and
+// note together) sits on the capsule's centre line; the note hangs below.
+.capsule__cta {
+  --cta-h: 50px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: calc(var(--cap-w) - var(--cap-h) * 0.35);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, calc(var(--cta-h) / -2 + 8px)) scale(0.96);
+  pointer-events: none;
+  transition:
+    opacity 300ms var(--ease-out),
+    transform 450ms var(--ease-out);
+
+  // Compact here: a small glass pill instead of the hero's full-size form.
+  .waitlist {
+    --waitlist-h: var(--cta-h);
+    max-width: 400px;
+    margin-inline: auto;
+  }
+
+  .waitlist__group {
+    --field-start: 16px;
+    gap: 4px;
+    padding: 4px;
+    background: oklch(0.17 0.025 262 / 0.86);
+    backdrop-filter: blur(10px);
+
+    &:has(.waitlist__input:focus) {
+      background: oklch(0.2 0.03 262 / 0.92);
+    }
+  }
+
+  .waitlist__input {
+    font-size: 0.9375rem;
+  }
+
+  .btn.waitlist__submit {
+    gap: 4px;
+    padding: 0 14px 0 18px;
+    font-size: 0.875rem;
+
+    // Arrow only on phones (as in _site.scss): a circle the pill's height.
+    @media (max-width: 480px) {
+      width: calc(var(--waitlist-h) - 8px);
+      padding: 0;
+    }
+  }
+
+  .waitlist__arrow {
+    width: 17px;
+    height: 17px;
+  }
+
+  .waitlist__note {
+    margin-top: 10px;
+    font-size: 0.8125rem;
+    color: oklch(1 0 0 / 0.62);
+  }
+
+  .waitlist__done {
+    gap: 8px;
+    padding: 0 14px;
+    background: oklch(0.2 0.05 160 / 0.9);
+    font-size: 0.875rem;
+  }
+
+  .waitlist__check {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// The form sits over the capsule out of the flow, so the cards that follow a
+// sign-up (.waitlist__next) would spill onto the next section; make room below.
+.capsule-row {
+  transition: margin-bottom 450ms var(--ease-out);
+
+  &:has(.waitlist__next) {
+    margin-bottom: 250px;
+
+    @media (max-width: 480px) {
+      margin-bottom: 330px;
+    }
+  }
+
+  // Stacked, the No sits under the capsule where the cards go: the words are
+  // decorative (the heading carries the meaning), so they step aside.
+  @media (max-width: $capsule-stack) {
+    .capsule-row__word {
+      transition: opacity 300ms var(--ease-out);
+    }
+
+    &:has(.waitlist__next) .capsule-row__word {
+      opacity: 0;
+    }
+  }
+}
+
+.capsule-row__inner[data-expanded] .capsule__cta,
+.capsule-row__inner:focus-within .capsule__cta {
+  opacity: 1;
+  transform: translate(-50%, calc(var(--cta-h) / -2));
+  pointer-events: auto;
+}
+
+// ---- FAQ -------------------------------------------------------------------
+
+.faq {
+  padding: 4px 20px;
+}
+
+.faq__item + .faq__item {
+  border-top: 1px solid var(--line);
+}
+
+.faq__item[open] .faq__icon {
+  transform: rotate(45deg);
+  color: var(--text-1);
+}
+
+.faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-1);
+  list-style: none;
+  cursor: pointer;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:hover .faq__icon {
+    color: var(--text-1);
+  }
+}
+
+.faq__icon {
+  flex-shrink: 0;
+  color: var(--text-3);
+  transition:
+    transform 200ms var(--ease-out),
+    color 120ms var(--ease-std);
+}
+
+// Answers open and close with their height (where the browser can animate
+// to auto); elsewhere they snap as before.
+.faq__item {
+  interpolate-size: allow-keywords;
+
+  &::details-content {
+    height: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      height 0.4s var(--ease-out),
+      opacity 0.3s var(--ease-out),
+      content-visibility 0.4s allow-discrete;
+  }
+
+  &[open]::details-content {
+    height: auto;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq__item::details-content {
+    transition: none;
+  }
+}
+
+.faq__a {
+  max-width: 600px;
+  padding-bottom: 18px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text-2);
+}

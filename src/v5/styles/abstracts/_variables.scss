@@ -1,0 +1,31 @@
+// Sass-only tokens for the base layer and the site frame. Colours, shapes and
+// motion live as CSS custom properties in base/_theme.scss.
+
+// One sans for headings and body. The stacks live in base/_theme.scss so the
+// Thai fallback is declared once.
+$font-family-heading: var(--font-sans);
+$font-family-body: var(--font-sans);
+$font-family: $font-family-body;
+
+// Type scale
+$font-size-base: 1rem; // 16px — body
+$font-size-md: 1.125rem; // 18px — body large
+$font-size-lg: 1.25rem; // 20px — h3
+$font-size-xl: 1.5rem; // 24px — h2
+$font-size-2xl: 2rem; // 32px — h1
+
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+
+$line-height-tight: 1.25;
+$line-height-snug: 1.35;
+$line-height-base: 1.7;
+
+$letter-spacing-base: -0.15px;
+$letter-spacing-tight: -0.025em;
+$letter-spacing-normal: -0.01em;
+
+// Stacking: the dropdown under the sticky nav, the drawer over both.
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-modal: 400;

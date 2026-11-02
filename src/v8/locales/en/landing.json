@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "tagline": "Prediction markets on Solana",
+    "description": "Trade Yes and No shares on real-world events. Orders match on an off-chain order book and settle on Solana, with USDC collateral held separately for each market."
+  },
+  "nav": {
+    "menu": "Menu",
+    "close": "Close",
+    "join": "Join waitlist",
+    "links": {
+      "how": "How it works",
+      "price": "Prices",
+      "flow": "Settlement",
+      "vault": "Collateral",
+      "markets": "Markets",
+      "faq": "FAQ"
+    }
+  },
+  "hero": {
+    "badge": "Prediction markets on Solana",
+    "lead": "Trade Yes and No shares on real-world events.",
+    "cta": "Join waitlist"
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "title": "Trade what happens next"
+  },
+  "steps": {
+    "custody": {
+      "word": "Custody",
+      "desc": "Funds and shares sit in an on-chain trading account tied to your wallet. Every order and withdrawal needs your signature.",
+      "bar": "Signed in · 7xKp…9fQe",
+      "chip": "Wallet"
+    },
+    "matching": {
+      "word": "Matching",
+      "desc": "Orders match off-chain by price, then by time. Matched trades settle on Solana in small batches.",
+      "bar": "Buy Yes at 62¢…",
+      "chip": "Limit"
+    },
+    "settlement": {
+      "word": "Settlement",
+      "desc": "Matched trades settle on-chain. Each Yes and No pair is backed by 1 USDC held in the market’s own vault.",
+      "bar": "Settling on Solana",
+      "chip": "USDC"
+    },
+    "resolution": {
+      "word": "Resolution",
+      "desc": "Each market states how it resolves before trading starts. At launch, Sols Market resolvers check the outcome against those rules and sign the result.",
+      "bar": "Rules fixed when the market opens",
+      "chip": "Rules"
+    }
+  },
+  "price": {
+    "title": "Every question has a price.",
+    "sideTitle": "What does a price mean?",
+    "side": "A share trades between 0 and 1 USDC, and its price reads as the market’s estimate of the chance. A Yes share at 62¢ means the market puts the chance at about 62%.",
+    "label": "Yes share",
+    "question": "Will BTC close above $150k on Dec 31?",
+    "chance": "chance",
+    "yes": "Yes",
+    "no": "No",
+    "min": "0",
+    "max": "1 USDC",
+    "sum": "= 1 USDC"
+  },
+  "flow": {
+    "title": "Off-chain + On-chain",
+    "body": "Orders match off-chain in real time. Matched trades settle on Solana against USDC collateral.",
+    "off": "Off-chain",
+    "offSub": "Order book",
+    "on": "On-chain",
+    "onSub": "Solana",
+    "bid": "Buy Yes · 62¢",
+    "ask": "Buy No · 38¢",
+    "match": "Matched · 1 USDC",
+    "batch": "Batch",
+    "settled": "Settled",
+    "vault": "USDC vault · 1:1"
+  },
+  "vault": {
+    "word": "USDC",
+    "body": "Matched trades settle on-chain. Each Yes and No pair is backed by 1 USDC held in the market’s own vault.",
+    "yes": "Yes 62¢",
+    "no": "No 38¢",
+    "pair": "1 USDC"
+  },
+  "markets": {
+    "title": "Markets on real-world events",
+    "more": "Learn more",
+    "cards": {
+      "crypto": {
+        "name": "Crypto",
+        "q": "Will BTC close above $150k on Dec 31?"
+      },
+      "politics": {
+        "name": "Politics",
+        "q": "Will turnout pass 70% in the next general election?"
+      },
+      "sports": {
+        "name": "Sports",
+        "q": "Over 2.5 goals in the cup final?"
+      }
+    }
+  },
+  "faq": {
+    "before": "Questi",
+    "after": "ns",
+    "lead": "Can’t find your answer? Contact the team.",
+    "cta": "Join the waitlist",
+    "items": {
+      "q1": {
+        "q": "What is Sols Market?",
+        "a": "A prediction market exchange on Solana. You trade Yes and No shares on questions about real-world events. When a market resolves, each winning share pays 1 USDC and each losing share pays nothing."
+      },
+      "q2": {
+        "q": "What does a price mean?",
+        "a": "A share trades between 0 and 1 USDC, and its price reads as the market’s estimate of the chance. A Yes share at 62¢ means the market puts the chance at about 62%."
+      },
+      "q3": {
+        "q": "How do I get paid?",
+        "a": "Sell your shares before the market closes, or hold them until it resolves and claim 1 USDC for each winning share. If a market is voided, each share pays 0.50 USDC. Claims go to your trading account, and you can withdraw USDC to your wallet from there."
+      },
+      "q4": {
+        "q": "Who holds my funds?",
+        "a": "Your USDC and shares are held on-chain in a trading account tied to your wallet. Orders need your wallet’s signature, and so do withdrawals, which Sols Market also co-signs. Each market’s collateral sits in that market’s own vault."
+      },
+      "q5": {
+        "q": "How are markets resolved?",
+        "a": "Each market publishes its resolution rules before trading starts, and the rules do not change while it is open. At launch, Sols Market resolvers check the outcome against those rules and sign the result, with no challenge period. A market whose outcome is unclear can be voided."
+      },
+      "q6": {
+        "q": "What does it cost?",
+        "a": "Takers pay a trading fee and makers pay none. The fee is highest for prices near 50¢ and lower toward either end, and the order summary shows it before you sign. Sols Market pays the Solana network fees, and deposits, withdrawals and claims are free."
+      }
+    }
+  },
+  "footer": {
+    "tagline": "Prediction markets on Solana",
+    "copyright": "© 2026 Sols Market",
+    "disclaimer": "Prediction market trading is speculative, and you can lose the full amount you trade. Sols Market is not available in all jurisdictions. Nothing on this site is financial advice."
+  },
+  "waitlist": {
+    "eyebrow": "Waitlist",
+    "title": "Get notified when trading opens",
+    "label": "Email address",
+    "placeholder": "you@example.com",
+    "button": "Join the waitlist",
+    "submitting": "Joining…",
+    "note": "We’ll send one email when trading opens.",
+    "invalid": "Enter a valid email address.",
+    "success": "You’re on the list.",
+    "successBody": "We’ll email {email} when trading opens.",
+    "close": "Close",
+    "telegram": {
+      "title": "Join the Telegram group",
+      "body": "Launch news first, and a place to talk with the team.",
+      "cta": "Open"
+    },
+    "affiliate": {
+      "title": "Affiliate Program",
+      "body": "Bring traders to Sols Market and get rewarded for it. Ask in the group for the details.",
+      "cta": "Ask"
+    }
+  },
+  "switch": "Page version"
+}

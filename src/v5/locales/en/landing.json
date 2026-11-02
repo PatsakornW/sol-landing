@@ -1,0 +1,261 @@
+{
+  "nav": {
+    "markets": "Markets",
+    "live": "Live",
+    "news": "News",
+    "howItWorks": "How it works",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "language": "Switch language",
+    "menu": "Menu",
+    "close": "Close",
+    "waitlist": "Join waitlist"
+  },
+  "meta": {
+    "title": "Sols Market | Prediction markets on Solana",
+    "description": "Trade Yes and No shares on real-world events. Orders match on an off-chain order book and settle on Solana, with USDC collateral held separately for each market."
+  },
+  "hero": {
+    "title": "Trade what happens next",
+    "scroll": "See more"
+  },
+  "demo": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "features": {
+    "title": "An order book with on-chain settlement",
+    "subtitle": "Orders match off-chain in real time. Matched trades settle on Solana against USDC collateral.",
+    "onchain": {
+      "title": "Settled on Solana",
+      "desc": "Matched trades settle on-chain. Each Yes and No pair is backed by 1 USDC held in the market’s own vault.",
+      "mark": "1:1",
+      "label": "Settlement",
+      "facts": {
+        "a": {
+          "label": "Collateral",
+          "value": "USDC, in a vault per market"
+        },
+        "b": {
+          "label": "Backing",
+          "value": "1 USDC per Yes and No pair"
+        },
+        "c": {
+          "label": "Network fees",
+          "value": "Paid by Sols Market"
+        }
+      }
+    },
+    "instant": {
+      "title": "Real-time order book",
+      "desc": "Orders match off-chain by price, then by time. Matched trades settle on Solana in small batches.",
+      "mark": "Live",
+      "label": "Matching",
+      "facts": {
+        "a": {
+          "label": "Order book",
+          "value": "Off-chain, price-time priority"
+        },
+        "b": {
+          "label": "Matching",
+          "value": "As soon as an order is placed"
+        },
+        "c": {
+          "label": "Settlement",
+          "value": "On-chain, in small batches"
+        }
+      }
+    },
+    "noncustodial": {
+      "title": "Signed by your wallet",
+      "desc": "Funds and shares sit in an on-chain trading account tied to your wallet. Every order and withdrawal needs your signature.",
+      "mark": "Signed",
+      "label": "Custody",
+      "facts": {
+        "a": {
+          "label": "Funds",
+          "value": "On-chain trading account"
+        },
+        "b": {
+          "label": "Sign in",
+          "value": "Solana wallet, Google or email"
+        },
+        "c": {
+          "label": "Withdrawals",
+          "value": "Signed by you and Sols Market"
+        }
+      }
+    },
+    "oracle": {
+      "title": "Published resolution rules",
+      "desc": "Each market states how it resolves before trading starts. At launch, Sols Market resolvers check the outcome against those rules and sign the result.",
+      "mark": "Rules",
+      "label": "Resolution",
+      "facts": {
+        "a": {
+          "label": "Method",
+          "value": "Sols Market resolvers"
+        },
+        "b": {
+          "label": "Rules",
+          "value": "Fixed when the market opens"
+        },
+        "c": {
+          "label": "Payout",
+          "value": "1 USDC per winning share"
+        }
+      }
+    },
+    "more": "Learn more",
+    "eyebrow": "Platform"
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "roller": {
+      "words": [
+        "Bitcoin",
+        "The election",
+        "Tonight’s match",
+        "Inflation",
+        "The Fed",
+        "Oil",
+        "Gold",
+        "The next AI model",
+        "Every question"
+      ],
+      "suffix": "has a price.",
+      "sentence": "Every question has a price."
+    },
+    "lead": "A market’s price is its estimate of the chance: a Yes share at 62¢ implies about 62%. When the market resolves, each winning share pays 1 USDC and each losing share pays nothing.",
+    "cta": "Join the waitlist"
+  },
+  "categories": {
+    "title": "Markets on real-world events",
+    "subtitle": "Markets cover crypto, politics, sports, economics, tech and world news. Related questions are grouped into events, and each question trades as its own Yes/No market.",
+    "crypto": {
+      "name": "Crypto"
+    },
+    "politics": {
+      "name": "Politics"
+    },
+    "sports": {
+      "name": "Sports"
+    },
+    "culture": {
+      "name": "Culture"
+    },
+    "tech": {
+      "name": "Tech"
+    },
+    "economy": {
+      "name": "Economics"
+    },
+    "eyebrow": "Markets"
+  },
+  "cta": {
+    "title": "Get notified when trading opens",
+    "eyebrow": "Waitlist"
+  },
+  "faq": {
+    "title": "Questions",
+    "lead": "Can’t find your answer? Contact the team.",
+    "cta": "Contact us",
+    "q1": {
+      "q": "What is Sols Market?",
+      "a": "A prediction market exchange on Solana. You trade Yes and No shares on questions about real-world events. When a market resolves, each winning share pays 1 USDC and each losing share pays nothing."
+    },
+    "q2": {
+      "q": "What does a price mean?",
+      "a": "A share trades between 0 and 1 USDC, and its price reads as the market’s estimate of the chance. A Yes share at 62¢ means the market puts the chance at about 62%."
+    },
+    "q3": {
+      "q": "How do I get paid?",
+      "a": "Sell your shares before the market closes, or hold them until it resolves and claim 1 USDC for each winning share. If a market is voided, each share pays 0.50 USDC. Claims go to your trading account, and you can withdraw USDC to your wallet from there."
+    },
+    "q4": {
+      "q": "Who holds my funds?",
+      "a": "Your USDC and shares are held on-chain in a trading account tied to your wallet. Orders need your wallet’s signature, and so do withdrawals, which Sols Market also co-signs. Each market’s collateral sits in that market’s own vault."
+    },
+    "q5": {
+      "q": "How are markets resolved?",
+      "a": "Each market publishes its resolution rules before trading starts, and the rules do not change while it is open. At launch, Sols Market resolvers check the outcome against those rules and sign the result, with no challenge period. A market whose outcome is unclear can be voided."
+    },
+    "q6": {
+      "q": "What does it cost?",
+      "a": "Takers pay a trading fee and makers pay none. The fee is highest for prices near 50¢ and lower toward either end, and the order summary shows it before you sign. Sols Market pays the Solana network fees, and deposits, withdrawals and claims are free."
+    },
+    "eyebrow": "FAQ"
+  },
+  "contact": {
+    "title": "Get in touch",
+    "body": "For questions, partnerships or press, reach the Sols Market team through any of the channels below.",
+    "emailLabel": "Email",
+    "eyebrow": "Contact"
+  },
+  "footer": {
+    "tagline": "Prediction markets on Solana, with an off-chain order book and on-chain settlement.",
+    "explore": "Explore",
+    "follow": "Follow us",
+    "copyright": "© 2026 Sols Market",
+    "disclaimer": "Prediction market trading is speculative, and you can lose the full amount you trade. Sols Market is not available in all jurisdictions. Nothing on this site is financial advice."
+  },
+  "waitlist": {
+    "label": "Email address",
+    "placeholder": "you@example.com",
+    "button": "Join the waitlist",
+    "submitting": "Joining…",
+    "note": "We’ll send one email when trading opens.",
+    "invalid": "Enter a valid email address.",
+    "failed": "Something went wrong. Try again.",
+    "success": "You’re on the list.",
+    "successBody": "We’ll email {email} when trading opens.",
+    "next": {
+      "telegram": {
+        "title": "Join the Telegram group",
+        "body": "Launch news first, and a place to talk with the team.",
+        "cta": "Open"
+      },
+      "affiliate": {
+        "title": "Affiliate Program",
+        "body": "Bring traders to Sols Market and get rewarded for it. Ask in the group for the details.",
+        "cta": "Ask"
+      }
+    }
+  },
+  "fan": {
+    "live": "Live",
+    "chance": "Chance",
+    "vol": "vol",
+    "awaiting": "Awaiting resolution",
+    "sol": {
+      "q": "SOL Up or Down · 5 min",
+      "up": "Up",
+      "down": "Down"
+    },
+    "turnout": {
+      "q": "Will turnout pass 70% in the next general election?"
+    },
+    "final": {
+      "q": "Over 2.5 goals in the cup final?"
+    },
+    "btc": {
+      "q": "Will BTC close above $150k on Dec 31?",
+      "end": "Dec 31"
+    },
+    "ai": {
+      "q": "Will a new frontier AI model launch this quarter?",
+      "end": "Dec 31"
+    },
+    "fed": {
+      "q": "Fed decision in December?",
+      "o1": "Cut 50+ bps",
+      "o2": "Cut 25 bps",
+      "o3": "No change",
+      "end": "Dec 10"
+    },
+    "film": {
+      "q": "Will this year’s biggest film pass $1B worldwide?"
+    }
+  },
+  "switch": "Page version"
+}

@@ -6,8 +6,8 @@ import '@/styles/globals.css';
 
 import { AppConfig, asset } from '@/configs/configs';
 import { Providers } from '@/components/providers';
+import { VersionSwitch } from '@/components/landing/VersionSwitch';
 import { revisionBody } from '@/styles/revision-body.styles';
-import { VersionToggle } from '@/v2/components/VersionToggle';
 import { LOCALE, translatorFor } from '@/v2/i18n/messages';
 import { v2Dark, v2Shape, v2Type } from '@/v2/styles/theme';
 
@@ -66,6 +66,7 @@ export const viewport: Viewport = {
  * there is nothing to restore before first paint and nothing to switch.
  */
 export default function V2Layout({ children }: { children: React.ReactNode }) {
+  const t = translatorFor();
   const themed = stylex.props(v2Type, v2Shape, v2Dark);
 
   return (
@@ -75,7 +76,7 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
           <main>{children}</main>
           {/* Fixed corner overlay — last in the DOM so it lands at the end of
               the tab order. */}
-          <VersionToggle />
+          <VersionSwitch current="parallax" label={t('v2.toggle')} />
         </Providers>
       </body>
     </html>

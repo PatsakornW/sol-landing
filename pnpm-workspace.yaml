@@ -1,0 +1,4 @@
+# sass pulls in @parcel/watcher for its file-watch mode, which this project
+# never uses, so its native build is declined rather than approved.
+allowBuilds:
+  '@parcel/watcher': false

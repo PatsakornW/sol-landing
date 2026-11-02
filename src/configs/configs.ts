@@ -30,5 +30,7 @@ export const AppConfig = {
     x: { label: '@solsmarket', url: 'https://x.com/' },
     discord: { label: 'Discord', url: 'https://discord.com/' },
     instagram: { label: '@solsmarket', url: 'https://instagram.com/' },
+    // The community group the waitlist sends people to once they sign up.
+    telegram: { label: 'Telegram', url: 'https://t.me/+20Mr8peQhjFmZTY1' },
   },
 } as const;

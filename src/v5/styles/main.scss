@@ -1,0 +1,11 @@
+// Landing app global stylesheet (imported once from app/[locale]/layout.tsx).
+
+// 1. Abstracts — Sass variables
+@use 'abstracts' as *;
+
+// 2. Base — palette and landing tokens, reset, typography
+@use 'base';
+
+// 3. Components
+@use 'components/site'; // page frame, type, buttons, reveal, nav, drawer, footer
+@use 'components/home'; // every home-page section
