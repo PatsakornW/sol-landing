@@ -1,7 +1,7 @@
 {
   "meta": {
     "tagline": "Prediction markets on Solana",
-    "description": "Trade Yes and No shares on real-world events. Orders match on an off-chain order book and settle on Solana, with USDC collateral held separately for each market."
+    "description": "Trade Yes or No on real-world events. If you’re right, each share pays 1 USDC."
   },
   "nav": {
     "menu": "Menu",
@@ -10,8 +10,8 @@
     "links": {
       "how": "How it works",
       "price": "Prices",
-      "flow": "Settlement",
-      "vault": "Collateral",
+      "flow": "Trading",
+      "vault": "Payouts",
       "markets": "Markets",
       "faq": "FAQ"
     }
@@ -27,34 +27,34 @@
   },
   "steps": {
     "custody": {
-      "word": "Custody",
-      "desc": "Funds and shares sit in an on-chain trading account tied to your wallet. Every order and withdrawal needs your signature.",
+      "word": "Sign in",
+      "desc": "Use a Solana wallet, Google or email. Your money stays in your own account.",
       "bar": "Signed in · 7xKp…9fQe",
       "chip": "Wallet"
     },
     "matching": {
-      "word": "Matching",
-      "desc": "Orders match off-chain by price, then by time. Matched trades settle on Solana in small batches.",
+      "word": "Pick a side",
+      "desc": "Buy Yes or No at today’s price. Your trade goes through right away.",
       "bar": "Buy Yes at 62¢…",
-      "chip": "Limit"
+      "chip": "Buy"
     },
     "settlement": {
-      "word": "Settlement",
-      "desc": "Matched trades settle on-chain. Each Yes and No pair is backed by 1 USDC held in the market’s own vault.",
-      "bar": "Settling on Solana",
+      "word": "Hold or sell",
+      "desc": "Keep your shares until the result is in, or sell them any time before the market closes.",
+      "bar": "Trade confirmed",
       "chip": "USDC"
     },
     "resolution": {
-      "word": "Resolution",
-      "desc": "Each market states how it resolves before trading starts. At launch, Sols Market resolvers check the outcome against those rules and sign the result.",
-      "bar": "Rules fixed when the market opens",
+      "word": "Get paid",
+      "desc": "Every market sets its rules before trading starts. If you’re right, each share pays 1 USDC.",
+      "bar": "Rules set before trading starts",
       "chip": "Rules"
     }
   },
   "price": {
     "title": "Every question has a price.",
     "sideTitle": "What does a price mean?",
-    "side": "A share trades between 0 and 1 USDC, and its price reads as the market’s estimate of the chance. A Yes share at 62¢ means the market puts the chance at about 62%.",
+    "side": "The price is the chance. A Yes share at 62¢ means people think there’s about a 62% chance it happens. Shares cost between 0 and 1 USDC.",
     "label": "Yes share",
     "question": "Will BTC close above $150k on Dec 31?",
     "chance": "chance",
@@ -65,22 +65,22 @@
     "sum": "= 1 USDC"
   },
   "flow": {
-    "title": "Off-chain + On-chain",
-    "body": "Orders match off-chain in real time. Matched trades settle on Solana against USDC collateral.",
-    "off": "Off-chain",
-    "offSub": "Order book",
-    "on": "On-chain",
+    "title": "Every trade has two sides",
+    "body": "One person buys Yes, another buys No. When their prices add up to 1 USDC, the trade goes through.",
+    "off": "Orders",
+    "offSub": "Live prices",
+    "on": "Confirmed",
     "onSub": "Solana",
     "bid": "Buy Yes · 62¢",
     "ask": "Buy No · 38¢",
-    "match": "Matched · 1 USDC",
-    "batch": "Batch",
-    "settled": "Settled",
-    "vault": "USDC vault · 1:1"
+    "match": "Trade made · 1 USDC",
+    "batch": "Trade",
+    "settled": "Done",
+    "vault": "Winner gets 1 USDC"
   },
   "vault": {
     "word": "USDC",
-    "body": "Matched trades settle on-chain. Each Yes and No pair is backed by 1 USDC held in the market’s own vault.",
+    "body": "Yes and No always add up to 1 USDC. When the result is in, the winning side collects the full 1 USDC per share.",
     "yes": "Yes 62¢",
     "no": "No 38¢",
     "pair": "1 USDC"
@@ -111,27 +111,27 @@
     "items": {
       "q1": {
         "q": "What is Sols Market?",
-        "a": "A prediction market exchange on Solana. You trade Yes and No shares on questions about real-world events. When a market resolves, each winning share pays 1 USDC and each losing share pays nothing."
+        "a": "A place to trade on what happens next. Pick Yes or No on a real-world question. If you’re right, each share pays 1 USDC. If not, it pays nothing."
       },
       "q2": {
         "q": "What does a price mean?",
-        "a": "A share trades between 0 and 1 USDC, and its price reads as the market’s estimate of the chance. A Yes share at 62¢ means the market puts the chance at about 62%."
+        "a": "The price is the chance. A Yes share at 62¢ means people think there’s about a 62% chance it happens. Shares cost between 0 and 1 USDC."
       },
       "q3": {
         "q": "How do I get paid?",
-        "a": "Sell your shares before the market closes, or hold them until it resolves and claim 1 USDC for each winning share. If a market is voided, each share pays 0.50 USDC. Claims go to your trading account, and you can withdraw USDC to your wallet from there."
+        "a": "Sell your shares any time before the market closes, or keep them until the result is in and collect 1 USDC for each winning share. If a market is cancelled, each share pays 0.50 USDC. You can then withdraw to your wallet."
       },
       "q4": {
-        "q": "Who holds my funds?",
-        "a": "Your USDC and shares are held on-chain in a trading account tied to your wallet. Orders need your wallet’s signature, and so do withdrawals, which Sols Market also co-signs. Each market’s collateral sits in that market’s own vault."
+        "q": "Who holds my money?",
+        "a": "You do. Your money and shares stay in your own account, linked to your wallet, and nothing is traded or withdrawn without your OK."
       },
       "q5": {
-        "q": "How are markets resolved?",
-        "a": "Each market publishes its resolution rules before trading starts, and the rules do not change while it is open. At launch, Sols Market resolvers check the outcome against those rules and sign the result, with no challenge period. A market whose outcome is unclear can be voided."
+        "q": "Who decides the result?",
+        "a": "Every market explains how the winner is decided before trading starts, and those rules don’t change. At launch, the Sols Market team checks the result against them. If the result is unclear, the market is cancelled and each share pays 0.50 USDC."
       },
       "q6": {
         "q": "What does it cost?",
-        "a": "Takers pay a trading fee and makers pay none. The fee is highest for prices near 50¢ and lower toward either end, and the order summary shows it before you sign. Sols Market pays the Solana network fees, and deposits, withdrawals and claims are free."
+        "a": "Some trades have a small fee, and you see it before you confirm. Deposits, withdrawals, collecting winnings and network fees are all free."
       }
     }
   },
