@@ -1261,35 +1261,24 @@ main {
 
 /* ---- Questions --------------------------------------------------------------- */
 
-/* The block pins for six stretches of scroll, one per question. */
+/* An accordion in the page's own scroll; the reader opens each answer. */
 .faq {
   position: relative;
-  height: 420vh;
   background: #fff;
 }
 
 .faq__stage {
-  position: sticky;
-  top: 0;
   display: grid;
   grid-template-columns: minmax(260px, 1fr) 2fr;
-  align-items: center;
+  align-items: start;
   gap: clamp(40px, 6vw, 120px);
-  height: 100vh;
-  padding: 96px var(--pad) 40px;
-  overflow: hidden;
+  padding: 18vh var(--pad) 20vh;
 }
 
-.faq__count {
-  margin-top: 40px;
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-  color: var(--muted);
-}
-
-.faq__count b {
-  font-weight: 600;
-  color: var(--ink);
+/* The heading stays beside the list while a long run of answers scrolls by. */
+.faq__intro {
+  position: sticky;
+  top: 120px;
 }
 
 .faq__title {
@@ -1317,7 +1306,6 @@ main {
 .faq__list {
   list-style: none;
   border-top: 1px solid var(--line);
-  transition: transform 0.5s var(--ease);
 }
 
 .faq__list li {
@@ -2084,9 +2072,13 @@ main {
 
   .faq__stage {
     grid-template-columns: 1fr;
-    align-content: start;
     gap: 28px;
-    padding-top: 92px;
+    padding-top: 14vh;
+    padding-bottom: 14vh;
+  }
+
+  .faq__intro {
+    position: static;
   }
 
   .faq__title {
@@ -2095,10 +2087,6 @@ main {
   }
 
   .faq__lead {
-    margin-top: 12px;
-  }
-
-  .faq__count {
     margin-top: 12px;
   }
 
@@ -2269,7 +2257,6 @@ main {
 
   .faq__stage {
     gap: 20px;
-    padding-top: 84px;
   }
 
   .faq__title {
