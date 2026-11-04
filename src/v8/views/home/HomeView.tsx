@@ -282,10 +282,10 @@ export function HomeView() {
     );
     root.current.querySelectorAll('.rv').forEach((el) => io.observe(el));
 
-    /* With motion allowed, three scenes pin to the screen while the scroll
+    /* With motion allowed, four scenes pin to the screen while the scroll
        plays them, as on the stage: the price counts up, the orders match and
-       settle, and the questions stack one by one; the desk cards fan in as
-       their section scrolls up. */
+       settle, the coins close into the pair, and the questions stack one by
+       one; the desk cards fan in as their section scrolls up. */
     const el = root.current;
     const q = gsap.utils.selector(el);
     const html = document.documentElement;
@@ -299,6 +299,30 @@ export function HomeView() {
       };
       pin('.show', 1, (tl) => playPrice(tl, el, 0, 1));
       pin('.desk', 1.6, (tl) => playFlow(tl, q, 0, true));
+      /* Payouts, as on the stage: the coins roll in from either side while the
+         section scrolls up, then it pins while they close into the pair, the
+         one USDC shows under them and the word pulls back into place. */
+      const roll = gsap.timeline({ defaults: { ease: 'none' } });
+      roll.fromTo(
+        q('.pair__coin--yes'),
+        { x: () => -window.innerWidth * 0.5, rotation: -120, autoAlpha: 0 },
+        { x: 0, rotation: 0, autoAlpha: 1, duration: 1, ease: 'power2.out' },
+        0,
+      );
+      roll.fromTo(
+        q('.pair__coin--no'),
+        { x: () => window.innerWidth * 0.5, rotation: 120, autoAlpha: 0 },
+        { x: 0, rotation: 0, autoAlpha: 1, duration: 1, ease: 'power2.out' },
+        0,
+      );
+      ScrollTrigger.create({ trigger: q('.vault')[0], start: 'top 85%', end: 'top top', scrub: 0.6, animation: roll, invalidateOnRefresh: true });
+      pin('.vault', 1.4, (tl) => {
+        tl.fromTo(q('.pair'), { '--gap': 1 }, { '--gap': 0, duration: 0.8, ease: 'power2.inOut' }, 0);
+        tl.fromTo(q('.pair__sum'), { autoAlpha: 0, y: 12 }, { autoAlpha: 1, y: 0, duration: 0.5 }, 0.6);
+        tl.fromTo(q('.vault__word'), { scale: 2.4, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1.2, ease: 'power1.out' }, 0.9);
+        tl.fromTo(q('.vault__body'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.6 }, 1.8);
+        tl.set({}, {}, 2.8);
+      });
       pin('.faq', 3.2, (tl) => playStack(tl, q, 0, 1));
       // The desk cards need no pin: they fan out as the section scrolls up, starting only a little low so it never opens empty.
       const fan = gsap.timeline({ defaults: { ease: 'none' } });

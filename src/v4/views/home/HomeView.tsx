@@ -94,7 +94,7 @@ const CELLS: ({ kind: 'text'; key: (typeof FEATURES)[number] } | { kind: 'cta' }
  * V4 — the black vault, carrying the sols_market landing page's words.
  *
  * A dark grid ground, a live 3D coin in matte black and chrome with grey
- * spheres and a pink spark round it, a tall serif in a silver gradient, and
+ * spheres and a pink spark round it, a heavy grotesk in a silver gradient, and
  * pink for everything that can be pressed. Then three steps on frosted cards
  * with coins rolling in, the chance in 3D, a deck of three live markets, a
  * five-minute market beside a headline that rolls through what has a price,
@@ -290,7 +290,7 @@ export function HomeView() {
           </div>
           <div className="hero__text">
             <p className="hero__kicker">{t4('hero.kicker')}</p>
-            <h1 className="serif hero__title" id="v4-hero">
+            <h1 className="display hero__title" id="v4-hero">
               <span>{t4('hero.a')}</span> <span>{t4('hero.b')}</span>
             </h1>
           </div>
@@ -307,7 +307,7 @@ export function HomeView() {
         <section className="how" id="v4-how" aria-labelledby="v4-how-t">
           <div className="deck__head">
             <p className="eyebrow rv">{t4('how.eyebrow')}</p>
-            <h2 className="serif how__title rv" id="v4-how-t">
+            <h2 className="display how__title rv" id="v4-how-t">
               {t4('how.title')}
             </h2>
           </div>
@@ -360,7 +360,7 @@ export function HomeView() {
           <div className="markets__deck">
             <div className="deck__head">
               <p className="eyebrow rv">{t4('markets.eyebrow')}</p>
-              <h2 className="serif markets__title rv" id="v4-markets-t">
+              <h2 className="display markets__title rv" id="v4-markets-t">
                 {t4('markets.title')}
               </h2>
               <p className="markets__lead rv">{t4('markets.lead')}</p>
@@ -375,7 +375,7 @@ export function HomeView() {
                     <span className="mkt__desk">{t4(`markets.names.${m.desk}`)}</span>
                     <span className="mkt__live">{t4('markets.live')}</span>
                   </div>
-                  <h3 className="serif mkt__q">{t4(`markets.q.${m.desk}`)}</h3>
+                  <h3 className="display mkt__q">{t4(`markets.q.${m.desk}`)}</h3>
                   <p className="mkt__chance">
                     <b data-count={m.yes}>{m.yes}%</b>
                     <span>{t4('markets.chance')}</span>
@@ -401,7 +401,7 @@ export function HomeView() {
                   <span className="mkt__desk">{t4('markets.names.economy')}</span>
                   <span className="mkt__live">{t4('markets.live')}</span>
                 </div>
-                <h3 className="serif mkt__q">{t4('markets.q.economy')}</h3>
+                <h3 className="display mkt__q">{t4('markets.q.economy')}</h3>
                 <ul className="mkt__options">
                   {FED.map((o) => (
                     <li key={o.key}>
@@ -462,7 +462,7 @@ export function HomeView() {
           </div>
           <div className="live__text">
             <p className="eyebrow rv">{t4('live.eyebrow')}</p>
-            <h2 className="serif live__title rv" id="v4-live-t">
+            <h2 className="display live__title rv" id="v4-live-t">
               <span className="live__word" key={word}>
                 {words[word]}
               </span>
@@ -485,7 +485,7 @@ export function HomeView() {
           <img className="deco platform__piece platform__piece--c" src={img('gavel')} alt="" data-speed="0.9" />
           <div className="platform__head rv">
             <p className="eyebrow">{t4('platform.eyebrow')}</p>
-            <h2 className="serif platform__title" id="v4-platform-t">
+            <h2 className="display platform__title" id="v4-platform-t">
               {t4('platform.title')}
             </h2>
           </div>
@@ -527,7 +527,7 @@ export function HomeView() {
                 ×
               </span>
               <img className="deco window__clip" src={img('capsule')} alt="" />
-              <h2 className="serif window__title" id="v4-risk-t">
+              <h2 className="display window__title" id="v4-risk-t">
                 {t4('risk.title')}
               </h2>
               <p>{t4('risk.body')}</p>
@@ -541,7 +541,7 @@ export function HomeView() {
         <section className="faq" id="v4-faq" aria-labelledby="v4-faq-t">
           <div className="faq__head rv">
             <p className="eyebrow">{t4('faq.eyebrow')}</p>
-            <h2 className="serif faq__title" id="v4-faq-t">
+            <h2 className="display faq__title" id="v4-faq-t">
               {t4('faq.title')}
             </h2>
           </div>

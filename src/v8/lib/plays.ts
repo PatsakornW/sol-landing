@@ -74,6 +74,7 @@ export function playStack(tl: Timeline, q: Select, at: number, step = 1.25): num
         cards[j]!,
         {
           scale: 1 - 0.05 * depth,
+          // Three levels of this is the --stack-lift the sheet keeps clear above .qs__tiles.
           y: -18 * depth,
           filter: `brightness(${1 - 0.15 * depth})`,
           autoAlpha: depth > 3 ? 0 : 1,

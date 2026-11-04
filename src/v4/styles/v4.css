@@ -6,8 +6,8 @@
  * cascade layers, and an unlayered `*`, `a` or `button` rule would beat every
  * one of its declarations.
  *
- * A near-black ground with a fine grid, matte black and chrome in 3D, a tall
- * serif in a silver gradient, and the mark's pink for everything pressable.
+ * A near-black ground with a fine grid, matte black and chrome in 3D, a heavy
+ * grotesk in a silver gradient, and the mark's pink for everything pressable.
  * Measures follow a 1440 × 900 desktop; below 1024px the page re-lays for a
  * tablet, below 640px for a phone.
  */
@@ -98,11 +98,11 @@ body {
 
 /* ── Type and small parts ──────────────────────────────────────────── */
 
-.serif {
-  font-family: var(--font-v4-serif), 'Instrument Serif', Georgia, serif;
-  font-weight: 400;
+.display {
+  font-family: var(--font-v4-display), 'Bricolage Grotesque', system-ui, sans-serif;
+  font-weight: 800;
   line-height: 0.98;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.045em;
   background: var(--soft);
   -webkit-background-clip: text;
   background-clip: text;
@@ -399,9 +399,10 @@ body {
 }
 
 .navsheet li button {
-  font-family: var(--font-v4-serif), 'Instrument Serif', serif;
-  font-size: 40px;
-  letter-spacing: -0.03em;
+  font-family: var(--font-v4-display), 'Bricolage Grotesque', system-ui, sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
   opacity: 0;
   transform: translateY(16px);
   transition:
@@ -539,8 +540,8 @@ body {
 
 .hero__title {
   display: grid;
-  font-size: clamp(80px, 9.4vw, 150px);
-  line-height: 0.9;
+  font-size: clamp(72px, 8.2vw, 132px);
+  line-height: 0.88;
   text-transform: uppercase;
   background: var(--silver);
   -webkit-background-clip: text;
@@ -1450,8 +1451,9 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
     inset 0 -4px 10px rgba(0, 0, 0, 0.5),
     0 8px 18px rgba(0, 0, 0, 0.35);
-  font-family: var(--font-v4-serif), 'Instrument Serif', serif;
-  font-size: 19px;
+  font-family: var(--font-v4-display), 'Bricolage Grotesque', system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
   letter-spacing: -0.02em;
   color: rgba(233, 233, 233, 0.82);
   transition:
@@ -1466,7 +1468,6 @@ body {
 .faq__list .is-on .faq__q {
   background: var(--pink);
   color: #111;
-  font-style: italic;
 }
 
 .faq__a--inline {
@@ -1646,7 +1647,13 @@ body {
 
 .join {
   position: fixed;
-  inset: 0;
+  /* Sized to what the on-screen keyboard leaves visible, not the whole
+     layout viewport (useKeyboardAvoid publishes both values; without them
+     this is the full screen). */
+  top: var(--vv-top, 0px);
+  right: 0;
+  left: 0;
+  height: var(--vv-height, 100%);
   z-index: 80;
   display: grid;
   place-items: center;
@@ -1666,7 +1673,12 @@ body {
 
 .join__scrim {
   position: absolute;
-  inset: 0;
+  /* The whole screen, even while the dialog above is sized to the space the
+     keyboard leaves: back up to the layout viewport's top and run its height. */
+  top: calc(var(--vv-top, 0px) * -1);
+  right: 0;
+  left: 0;
+  height: 100lvh;
   background: rgba(8, 8, 8, 0.7);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
@@ -1679,8 +1691,9 @@ body {
   flex-direction: column;
   align-items: center;
   width: min(540px, 100%);
-  max-height: calc(100svh - 32px);
+  max-height: calc(var(--vv-height, 100svh) - 32px);
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 44px 36px 32px;
   border: 1px dashed rgba(255, 255, 255, 0.18);
   border-radius: 16px;
@@ -1724,11 +1737,11 @@ body {
 
 .join__title {
   margin-top: 10px;
-  font-family: var(--font-v4-serif), 'Instrument Serif', serif;
-  font-size: clamp(34px, 4vw, 46px);
-  font-weight: 400;
+  font-family: var(--font-v4-display), 'Bricolage Grotesque', system-ui, sans-serif;
+  font-size: clamp(32px, 3.6vw, 42px);
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.045em;
   background: var(--soft);
   -webkit-background-clip: text;
   background-clip: text;
@@ -1970,7 +1983,7 @@ body {
 
   .hero__title {
     display: block;
-    font-size: clamp(64px, 12vw, 110px);
+    font-size: clamp(56px, 10.5vw, 96px);
   }
 
   .hero__lead {
@@ -2196,7 +2209,7 @@ body {
 
   .hero__title {
     display: grid;
-    font-size: 22vw;
+    font-size: 19vw;
   }
 
   .hero__lead {

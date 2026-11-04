@@ -1717,6 +1717,12 @@ main {
 
 .sheet--join {
   align-items: center;
+  /* Sized to what the on-screen keyboard leaves visible, not the whole
+     layout viewport (useKeyboardAvoid publishes both values; without them
+     this is the full screen). */
+  top: var(--vv-top, 0px);
+  bottom: auto;
+  height: var(--vv-height, 100%);
 }
 
 .sheet--join .sheet__panel {
@@ -2360,6 +2366,11 @@ main {
   .sheet--join .sheet__panel {
     padding: 28px 20px 92px;
     border-radius: 24px;
+  }
+
+  /* With the keyboard up the switch is under it, so give that room back. */
+  .sheet--join[data-kb] .sheet__panel {
+    padding-bottom: 28px;
   }
 
   .sheet--join .sheet__close {

@@ -60,9 +60,14 @@
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* The clip sits on <html> as well as <body>. With <html> left visible, body's
+   overflow is handed to the viewport and body itself never clips; phones then
+   size the layout viewport to the widest thing on the page (the pair coins
+   waiting off-screen, the tilted cards) and the whole page pans sideways. */
 html {
   background: #000;
   scroll-behavior: auto;
+  overflow-x: clip;
 }
 
 html.is-locked {
@@ -1298,7 +1303,13 @@ body {
 
 .join {
   position: fixed;
-  inset: 0;
+  /* Sized to what the on-screen keyboard leaves visible, not the whole
+     layout viewport (useKeyboardAvoid publishes both values; without them
+     this is the full screen). */
+  top: var(--vv-top, 0px);
+  right: 0;
+  left: 0;
+  height: var(--vv-height, 100%);
   z-index: 80;
   display: grid;
   place-items: center;
@@ -1318,7 +1329,12 @@ body {
 
 .join__scrim {
   position: absolute;
-  inset: 0;
+  /* The whole screen, even while the dialog above is sized to the space the
+     keyboard leaves: back up to the layout viewport's top and run its height. */
+  top: calc(var(--vv-top, 0px) * -1);
+  right: 0;
+  left: 0;
+  height: 100lvh;
   background: rgba(0, 0, 0, 0.62);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -1331,8 +1347,9 @@ body {
   flex-direction: column;
   align-items: center;
   width: min(540px, 100%);
-  max-height: calc(100svh - 32px);
+  max-height: calc(var(--vv-height, 100svh) - 32px);
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 44px 36px 32px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
@@ -1741,17 +1758,23 @@ html.is-stage {
     text-align: center;
   }
 
+  /* The tiles share one grid cell, so the stack is as tall as its longest
+     answer and every tile matches it — no fixed height to leave a gap.
+     The tiles beneath step up 18px a level, three levels deep (playStack in
+     lib/plays.ts), so that much room is kept above the stack for them;
+     otherwise they ride up over the lead line. */
   .qs__tiles {
+    --stack-lift: 54px;
     position: relative;
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     width: min(760px, 78vw);
-    height: min(400px, 46vh);
-    margin-top: 40px;
+    margin-top: calc(28px + var(--stack-lift));
   }
 
   .qs__tile {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    grid-area: 1 / 1;
     padding: 34px 40px;
     transform-origin: 50% 0;
     box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.5);
@@ -2134,11 +2157,12 @@ html:not(.is-stage) {
     margin-top: 48px;
   }
 
-  /* With motion allowed the three played scenes pin to a full screen, and
+  /* With motion allowed the four played scenes pin to a full screen, and
      their pieces fit inside one. */
   &.is-pin {
     .show,
     .desk,
+    .vault,
     .faq {
       display: flex;
       flex-direction: column;
@@ -2218,15 +2242,18 @@ html:not(.is-stage) {
 
     .qs__tiles {
       position: relative;
-      display: block;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      --stack-lift: 54px;
+      gap: 0;
       width: 100%;
-      height: min(470px, 62svh);
-      margin-top: 32px;
+      /* Room above for the tiles beneath to step up into; see the stage rule. */
+      margin-top: calc(20px + var(--stack-lift));
     }
 
     .qs__tile {
-      position: absolute;
-      inset: 0;
+      position: relative;
+      grid-area: 1 / 1;
       overflow: hidden;
       transform-origin: 50% 0;
       box-shadow: 0 -12px 50px rgba(0, 0, 0, 0.45);
@@ -2234,6 +2261,28 @@ html:not(.is-stage) {
 
     .qs__tile p {
       font-size: 13.5px;
+    }
+
+    /* The scroll plays the pair and the word here, so the one-shot reveals
+       and their transitions stand down rather than fight the scrub. */
+    .vault {
+      align-items: center;
+    }
+
+    .vault .rv,
+    .vault .rv.is-in {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .pair {
+      margin-bottom: 76px;
+    }
+
+    .pair__coin,
+    .pair__sum {
+      transition: none;
     }
 
     .qs__cta {

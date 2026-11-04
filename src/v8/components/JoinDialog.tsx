@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { useKeyboardAvoid } from '@/hooks/useKeyboardAvoid';
 import { AppConfig } from '@/configs/configs';
 import { BrandMark } from '../brand';
 import { t8 } from '../i18n/messages';
@@ -25,6 +26,7 @@ type Phase = 'idle' | 'sending' | 'done';
  */
 export function JoinDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const id = useId();
+  const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState('');
   const [note, setNote] = useState<{ text: string; error: boolean } | null>(null);
@@ -32,6 +34,9 @@ export function JoinDialog({ open, onClose }: { open: boolean; onClose: () => vo
   const timer = useRef(0);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  // On a phone the keyboard covers the lower screen; keep the sheet in what is left.
+  useKeyboardAvoid(root, open);
 
   useEffect(() => {
     if (!open) return;
@@ -48,7 +53,7 @@ export function JoinDialog({ open, onClose }: { open: boolean; onClose: () => vo
   }, [open, onClose]);
 
   return (
-    <div className={`join${open ? ' is-open' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-t`} aria-hidden={!open} inert={!open}>
+    <div ref={root} className={`join${open ? ' is-open' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-t`} aria-hidden={!open} inert={!open}>
       <button type="button" className="join__scrim" tabIndex={-1} aria-hidden="true" onClick={onClose} />
       <div className="join__panel" data-lenis-prevent>
         <button type="button" className="join__close" onClick={onClose} aria-label={t8('waitlist.close')}>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { useKeyboardAvoid } from '@/hooks/useKeyboardAvoid';
 import { t7 } from '../i18n/messages';
 import { TELEGRAM_URL, type Desk } from '../lib/content';
 import { ArrowRight, Check, Close, Gift, Telegram } from './Icons';
@@ -22,6 +23,7 @@ type Phase = 'idle' | 'sending' | 'done';
  */
 export function JoinDialog({ open, picked, onClose }: { open: boolean; picked: Desk[]; onClose: () => void }) {
   const id = useId();
+  const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState('');
   const [note, setNote] = useState<{ text: string; error: boolean } | null>(null);
@@ -29,6 +31,9 @@ export function JoinDialog({ open, picked, onClose }: { open: boolean; picked: D
   const timer = useRef(0);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  // On a phone the keyboard covers the lower screen; keep the sheet in what is left.
+  useKeyboardAvoid(root, open);
 
   useEffect(() => {
     if (!open) return;
@@ -45,7 +50,7 @@ export function JoinDialog({ open, picked, onClose }: { open: boolean; picked: D
   }, [open, onClose]);
 
   return (
-    <div className={`sheet sheet--join${open ? ' is-open' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-t`} aria-hidden={!open} inert={!open}>
+    <div ref={root} className={`sheet sheet--join${open ? ' is-open' : ''}`} role="dialog" aria-modal="true" aria-labelledby={`${id}-t`} aria-hidden={!open} inert={!open}>
       <div className="sheet__panel" data-lenis-prevent>
         <button type="button" className="sheet__close" onClick={onClose} aria-label={t7('join.close')}>
           <Close />
