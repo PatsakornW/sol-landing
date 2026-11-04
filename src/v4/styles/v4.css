@@ -62,8 +62,14 @@
   --edge: 65px;
 }
 
+/* The clip sits on <html> as well as <body>. With <html> left visible, body's
+   overflow is handed to the viewport and body itself never clips; phones then
+   size the layout viewport to the widest thing on the page (the coins waiting
+   to roll in, the stars and windows drifting past the edge) and the whole
+   page pans sideways, the header's menu button pushed off screen. */
 html {
   background: var(--bg);
+  overflow-x: clip;
 }
 
 html.is-locked {
